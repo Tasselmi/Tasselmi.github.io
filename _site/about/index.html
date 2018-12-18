@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="About Me - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="种一棵树，最好的时间是十年前，其次是现在。">
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/about/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>About Me - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/about/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Page Header -->
+
+
+
+
+
+
+
+<header class="intro-header" style="background-image: url('/img/about-bg.jpg')">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        
+        <div class="site-heading">
+        
+          <h1>About Me</h1>
+          <span class="subheading">种一棵树，最好的时间是十年前，其次是现在。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- Main Content -->
+<div class="container">
+	<div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- PostList Container -->
+    		<div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                postlist-container
+            ">
+    			<!-- Language Selector -->
+<select class="sel-lang" onchange= "onLanChange(this.options[this.options.selectedIndex].value)">
+    <option value="0" selected> 中文 Chinese </option>
+    <option value="1"> 英文 English </option>
+</select>
+
+<!-- Chinese Version -->
+<div class="zh post-container">
+    
+    <!-- > 写写代码，做做设计，  
+> 离开世界之前，一切都是过程。
+
+Hey，我是黄玄，病毒种，进化程度不明，多出没于[博客](https://huangxuan.me)、[微博](weibo.com/huxpro)、[知乎](https://www.zhihu.com/people/huxpro/pins/posts)、[Twitter](https://twitter.com/Huxpro/)、[Github](http://github.com/huxpro)、[Medium](https://medium.com/@Huxpro) 等地带，绝招尚在开发中。
+
+职业是软件工程师，[Web 工会](https://medium.com/ben-and-dion/team-web-3315aa447fb2#.359a9c6cl)活跃成员。目前在 [Facebook](https://www.facebook.com/) 写 [Reason](https://reasonml.github.io/) 与 [Messenger.com](http://messenger.com/) ，曾被招募为淘宝网 · [阿里旅行](http://alitrip.com)前端工程师、微影时代 · [微票儿](http://www.wepiao.com/?r=movie)前端基础工程团队负责人、[饿了么](https://ele.me/) · 大前端团队 · [PWA 顾问](https://medium.com/elemefe/upgrading-ele-me-to-progressive-web-app-2a446832e509)。
+
+一些作品和开源软件项目，👉 戳 [Portfolio](/portfolio)、[Github](http://github.com/huxpro)、[演说.io](https://zhuanlan.zhihu.com/p/21280918)。  -->
+
+<!-- &nbsp; -->
+
+<blockquote>
+  <h5 id="about-me">About Me</h5>
+</blockquote>
+
+<p>数据分析师一枚。兴趣广泛，目前沉迷于函数式编程等新奇的玩意儿中不可自拔。</p>
+
+<p>以梦为马，诗酒趁年华。海阔天空，在勇敢以后。</p>
+
+<p>热爱数据分析/挖掘，在数据库、数据分析、爬虫、机器学习、数据可视化、自动化数据报表、分布式集群、算法、并行计算等方面小有研究。</p>
+
+<p>很幸运的是，可以在人生无涯之中找到感兴趣的那么一两件小事，消磨时间打发无聊，从而让生活不那么枯燥。</p>
+
+<p>想做全栈式的数据科学家，想和你一起浪迹天涯。</p>
+
+<p> 
+<!-- &nbsp; --></p>
+
+<blockquote>
+  <h5 id="copyright-announcement">Copyright Announcement</h5>
+</blockquote>
+
+<p style="color: red;font-weight: bold;">原创作品，望君尊重；版权所有，请勿抄袭。</p>
+<p>如果您存在任何下列情形之一的，请务必注明内容出自本博客并附上本博客的链接地址：</p>
+<ul type="circle">
+	<li>整文转载的；</li>
+	<li>大段文字或代码引用的；</li>
+	<li>受本博客思想或内容启发的；</li>
+</ul>
+
+<p>未尽事宜，可邮件来询，谢谢。</p>
+
+<p> </p>
+
+<blockquote>
+  <h5 id="way-to-contact-me">Way to Contact Me</h5>
+</blockquote>
+
+<ul>
+  <li>E-mail: tasselmi@yeah.net</li>
+  <li>WeChatID: tassel_whu</li>
+</ul>
+
+<p> </p>
+
+<!-- - [Upgrading to Progressive Web Apps][9] · [JSConf CN 上海 2017](http://2017.jsconf.cn/)
+- Building Progressive Web Apps · [CSDI 广州 2017](http://www.csdisummit.com/)
+- The State of Progressive Web App · GDG IO Redux 北京 2017
+- 炒冷饭 · PWA 到底是个什么玩意？· Baidu HQ 北京 2017
+- [Service Worker 101][5] · GDG DevFest 北京 2016
+- [Progressive Web App，复兴序章][4] · [QCon 上海 2016](http://2016.qconshanghai.com/presentation/3111)
+- Progressive Web App 之我见 · GDG IO Redux 北京 2016
+- [CSS Still Sucks 2015][2] · 2015
+- [JavaScript 模块化七日谈][1] · 2015
+
+[1]: //huangxuan.me/2015/07/09/js-module-7day/
+[2]: //huangxuan.me/2015/12/28/css-sucks-2015/
+[3]: //huangxuan.me/2016/06/05/pwa-in-my-pov/
+[4]: //huangxuan.me/2016/10/20/pwa-qcon2016/
+[5]: //huangxuan.me/2016/11/20/sw-101-gdgdf/
+[6]: https://yanshuo.io/assets/player/?deck=58ac8598b123db0067292f92 "PWA Rehashing"
+[7]: https://yanshuo.io/assets/player/?deck=593ad6fbfe88c2006a0a0d6d "The State of PWA"
+[8]: https://yanshuo.io/assets/player/?deck=594d673d570c357d0698a950 "Building PWA"
+[9]: //huangxuan.me/jsconfcn2017/ -->
+
+</div>
+
+<!-- English Version -->
+<div class="en post-container">
+    
+    
+<blockquote>
+  <p>Please see the Chinese version. Thanks.</p>
+</blockquote>
+
+<!-- Hi, I am *@huxpro* (Huang, Xuan), a software engineer & a designer. I am currently working on [Reason](https://reasonml.github.io/) and [Messenger.com](http://messenger.com/) at [Facebook](https://www.facebook.com/). I previously worked as Web Front-End Engineer at [Alibaba Trip](https://www.alitrip.com/); Web Front-End Infrastructure Team Lead at [Wepiao.com](https://www.crunchbase.com/organization/wepiao#/entity); And [Invited Consultant on PWA]((https://medium.com/elemefe/upgrading-ele-me-to-progressive-web-app-2a446832e509)) at [Ele.me](https://github.com/elemefe/).
+
+I studied Digital Media Art and graduated from [Communication University of China](https://en.wikipedia.org/wiki/Communication_University_of_China) by 2016, and am studying Computer Science at [Rochester Institute of Technology](https://en.wikipedia.org/wiki/Rochester_Institute_of_Technology) from 2017.
+
+
+##### Talks
+
+- [Upgrading to Progressive Web Apps][9] · [JSConf China Shanghai 2017](http://2017.jsconf.cn/)
+- Building Progressive Web Apps · [CSDI Guangzhou 2017](http://www.csdisummit.com/)
+- The State of Progressive Web App · GDG IO Redux Beijing 2017
+- PWA Rehashing · Baidu HQ Beijing 2017
+- [Service Worker 101][5] · GDG DevFest Beijing 2016
+- [Progressive Web Apps][4] · QCon Shanghai 2016
+- Progressive Web App in my POV · GDG IO Redux Beijing 2016
+- [CSS Still Sucks 2015][2] · 2015
+- [JavaScript Modularization Journey][1] · 2015
+
+
+
+[1]: //huangxuan.me/2015/07/09/js-module-7day/
+[2]: //huangxuan.me/2015/12/28/css-sucks-2015/
+[3]: //huangxuan.me/2016/06/05/pwa-in-my-pov/
+[4]: //huangxuan.me/2016/10/20/pwa-qcon2016/
+[5]: //huangxuan.me/2016/11/20/sw-101-gdgdf/
+[6]: https://yanshuo.io/assets/player/?deck=58ac8598b123db0067292f92 "PWA Rehashing"
+[7]: https://yanshuo.io/assets/player/?deck=593ad6fbfe88c2006a0a0d6d "The State of PWA"
+[8]: https://yanshuo.io/assets/player/?deck=594d673d570c357d0698a950 "Building PWA"
+[9]: //huangxuan.me/jsconfcn2017/ -->
+
+
+</div>
+
+
+
+
+    		</div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=Slides"
+                    title="Slides"
+                    rel="1">Slides</a>
+        
+                <a data-sort="0007" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="4">个人网站</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="4">阿里云服务器</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="4">jekyll</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="1">学习</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C"
+                    title="工作"
+                    rel="1">工作</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4"
+                    title="工作思维"
+                    rel="1">工作思维</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%BC%80%E7%AF%87%E8%AF%AD"
+                    title="开篇语"
+                    rel="1">开篇语</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%BD%92%E7%BA%B3"
+                    title="归纳"
+                    rel="1">归纳</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6"
+                    title="数据科学"
+                    rel="1">数据科学</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E6%BC%94%E7%BB%8E"
+                    title="演绎"
+                    rel="1">演绎</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="1">生活</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=JavaScript"
+                    title="JavaScript"
+                    rel="1">JavaScript</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=Web"
+                    title="Web"
+                    rel="1">Web
+    </div>
+</section>
+
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+  <hr>
+  <h5><a href="/about/">ABOUT ME</a></h5>
+  <div class="short-about">
+    
+    <img src="/img/me.JPG" />
+    
+    
+    <p>Be brave Be hungry<br>海阔天空，在勇敢以后</p>
+    
+    <!-- SNS Link -->
+    
+
+
+<ul class="list-inline">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+  </div>
+</section>
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://qianduan.guru/">前端外刊评论</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+  <li><a href="https://www.ruoyaowu.com/">David's Game</a></li>
+  
+  <li><a href="http://dhong.co">DHong Say</a></li>
+  
+  <li><a href="http://ingf.github.io/">尹峰以为</a></li>
+  
+  <li><a href="http://xieminis.me/">解旻的博客</a></li>
+  
+</ul>
+
+    		</div>
+        
+	</div>
+</div>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2018
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+<!-- Handle Language Change -->
+<script type="text/javascript">
+    // get nodes
+    var $zh = document.querySelector(".zh");
+    var $en = document.querySelector(".en");
+    var $select = document.querySelector("select");
+
+    // bind hashchange event
+    // Changes at v1.7.2: change the language flag from hash-basing to in-memory basing
+    // due to its confliction with catalog anchors.
+    // window.addEventListener('hashchange', _render);
+
+    // handle render
+    function _render(_hash){
+        var _hash = _hash || window.location.hash;
+        // en
+        if(_hash == "#en"){
+            $select.selectedIndex = 1;
+            $en.style.display = "block";
+            $en.classList.add("active");
+            $zh.style.display = "none";
+            $zh.classList.remove("active");
+        // zh by default
+        }else{
+            // not trigger onChange, otherwise cause a loop call.
+            $select.selectedIndex = 0;
+            $zh.style.display = "block";
+            $zh.classList.add("active");
+            $en.style.display = "none";
+            $en.classList.remove("active");
+        }
+        // interop with catalog 
+        if ("") generateCatalog(".catalog-body");
+    }
+
+    // handle select change
+    function onLanChange(index){
+        if(index == 0){
+            _hash = "#zh"
+        }else{
+            _hash = "#en"
+        }
+        _render(_hash)
+    }
+
+    // init
+    _render();
+</script>
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

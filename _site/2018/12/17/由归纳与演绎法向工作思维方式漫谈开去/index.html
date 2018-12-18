@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="由归纳演绎法向工作思维方式漫谈开去 - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content=" 
+
+">
+    
+    <meta property="article:published_time" content="2018-12-17T20:00:00Z">
+    
+    
+    <meta property="article:author" content="LiangFan">
+    
+    
+    <meta property="article:tag" content="归纳">
+    
+    <meta property="article:tag" content="演绎">
+    
+    <meta property="article:tag" content="工作思维">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/2018/12/17/%E7%94%B1%E5%BD%92%E7%BA%B3%E4%B8%8E%E6%BC%94%E7%BB%8E%E6%B3%95%E5%90%91%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4%E6%96%B9%E5%BC%8F%E6%BC%AB%E8%B0%88%E5%BC%80%E5%8E%BB/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>由归纳演绎法向工作思维方式漫谈开去 - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2018/12/17/%E7%94%B1%E5%BD%92%E7%BA%B3%E4%B8%8E%E6%BC%94%E7%BB%8E%E6%B3%95%E5%90%91%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4%E6%96%B9%E5%BC%8F%E6%BC%AB%E8%B0%88%E5%BC%80%E5%8E%BB/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/my-post/12.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/my-post/12.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E5%BD%92%E7%BA%B3" title="归纳">归纳</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E6%BC%94%E7%BB%8E" title="演绎">演绎</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4" title="工作思维">工作思维</a>
+                        
+                    </div>
+                    <h1>由归纳演绎法向工作思维方式漫谈开去</h1>
+                    
+                    <h2 class="subheading">————决定你能走多远的，永远是你的思维方式</h2>
+                    <span class="meta">Posted by LiangFan on December 17, 2018</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<p> </p>
+
+<blockquote>
+  <p>最近在钻研函数式编程（Functional Programming），可以说是对我的思维方式和对事物的看法产生了很大的影响。函数式编程将编程理解为纯函数式操作，将世界解构为操作对象和操作符（输入、输出和函数），它的设计理念从最开始就是将事物从最开始进行原子化解剖，用函数来连接原子进行操作，然后将这些原子一层层累加，最后筑成自己想要的高楼大厦。一个形象的说法是，面向对象（Object Oriented,OO）就像是归纳法；而函数式编程（FP）就像是演绎法。</p>
+</blockquote>
+
+<h4 id="什么是归纳法">什么是归纳法</h4>
+<p>所见：小猫A爱吃鱼❤️；小猫B爱吃鱼❤️；小猫C爱吃鱼❤️；<br />
+所得：猫爱吃鱼。</p>
+
+<p> </p>
+
+<h4 id="什么是演绎法">什么是演绎法</h4>
+<p>所见：猫爱吃鱼❤️；有只小猫B；<br />
+所得：小猫B会喜欢吃鱼。</p>
+
+<p> </p>
+
+<h4 id="由此而谈及2种的典型工作思维方式">由此而谈及2种的典型工作思维方式</h4>
+
+<p>今天要谈的却并不是函数式编程，也不是演绎法与归纳法的区别和联系，而是工作思维方式。</p>
+
+<p>如果用演绎法和归纳法类比，那么会有两种比较迥异的工作思维：</p>
+
+<ul>
+  <li>
+    <font color="red"><b>归纳法式工作思维</b></font>
+    <p>一切以需求为依归，提一个需求做一个需求，不提需求就不做。问他为什么没做，因为你没给我提需求。这种工作思维方式是典型的需求驱动，具体的需求具体分析具体来做，需求无穷尽也，工作自然无穷尽也。最重要的是，对于需求的人而言你的响应效率低下；对于你自己而言，久了你会腻烦觉得别人在挑刺。（到底要经历多少特殊，才能归纳出普遍性呢？）</p>
+  </li>
+  <li>
+    <font color="red"><b>演绎法式工作思维</b></font>
+    <p>需求之外思考从底层构建一个能满足所有人的系统，然后再通过一个一个的需求实践让系统丰满和更强大，不断迭代。所有人在这个系统中也许都无法直接得到自己想要的，但是却可以辅助一些自己的加工来满足更加个性化的需求。由于面向通用化需求，因而能更高效运转。（由普遍，而推及一个一个的特殊）</p>
+  </li>
+</ul>
+
+<p>以具体需求为依归，终究会疲于奔命。小型团队可以如此，但是随着团队规模的扩张需求爆发，其可复制性荡然无存，且效率愈来愈低下。</p>
+
+<p>演绎法工作思维其实体现的是更积极主动的工作态度，以及对于业务/结构较于普罗大众更加深刻的思考过程，它考验个人的前瞻性和把控能力，但这也正是其魅力和挑战所在。当然，没有一定的经验是无法实现从归纳式工作思维向演绎法式工作思维的转变的，但是更重要的是，要时时刻刻有这种转变的意识。</p>
+
+<p>很显然，演绎法式工作思维，能让你走得更远，步伐也更加坚实。</p>
+
+<p> </p>
+
+<hr />
+
+<p>2017年12月17日有感于为什么很难跟很多人沟通 <code class="highlighter-rouge">什么叫构建底层数据</code></p>
+
+<p><img src="/img/my-post/20181217.jpg" alt="Alt text" /></p>
+
+<!-- - 非结构化到结构化的过程
+- 以所有人的需求为视角来创建数据明细
+- 分主题解析/按照更新频率
+- 极大可能保留原始数据信息，或者不损失任何信息
+- 不做任何计算上的聚合（相当于ETL中的Extract）(不需要做数据规范化处理) -->
+
+<ul type="circle">
+ <li>非结构化到结构化的过程</li>
+ <li>以所有人的需求为视角来创建数据明细</li>
+ <li>分主题解析/按照更新频率</li>
+ <li>极大可能保留原始数据信息，或者不损失任何信息</li>
+ <li>不做任何计算上的聚合（相当于ETL中的Extract）(不需要做数据规范化处理)</li>
+</ul>
+
+<p> 
+ </p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/13/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B2/" data-toggle="tooltip" data-placement="top" title="从零开始部署个人网站上线之2">
+                        Previous<br>
+                        <span>从零开始部署个人网站上线之2</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/12/18/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B3/" data-toggle="tooltip" data-placement="top" title="从零开始部署个人网站上线之3">
+                        Next<br>
+                        <span>从零开始部署个人网站上线之3</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=Slides"
+                    title="Slides"
+                    rel="1">Slides</a>
+        
+                <a data-sort="0007" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="4">个人网站</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="4">阿里云服务器</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="4">jekyll</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="1">学习</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C"
+                    title="工作"
+                    rel="1">工作</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4"
+                    title="工作思维"
+                    rel="1">工作思维</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%BC%80%E7%AF%87%E8%AF%AD"
+                    title="开篇语"
+                    rel="1">开篇语</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E5%BD%92%E7%BA%B3"
+                    title="归纳"
+                    rel="1">归纳</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6"
+                    title="数据科学"
+                    rel="1">数据科学</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E6%BC%94%E7%BB%8E"
+                    title="演绎"
+                    rel="1">演绎</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="1">生活</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=JavaScript"
+                    title="JavaScript"
+                    rel="1">JavaScript</a>
+        
+                <a data-sort="0017" 
+                    href="/archive/?tag=Web"
+                    title="Web"
+                    rel="1">Web
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://qianduan.guru/">前端外刊评论</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+  <li><a href="https://www.ruoyaowu.com/">David's Game</a></li>
+  
+  <li><a href="http://dhong.co">DHong Say</a></li>
+  
+  <li><a href="http://ingf.github.io/">尹峰以为</a></li>
+  
+  <li><a href="http://xieminis.me/">解旻的博客</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2018
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
