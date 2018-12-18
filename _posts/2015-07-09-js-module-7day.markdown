@@ -2,7 +2,7 @@
 layout:     keynote
 title:      "JavaScript 模块化七日谈"
 subtitle:   "🎞  Slides:JavaScript Modularization Journey"
-iframe:     "//Tasselmi.github.io/keynote/"
+iframe:     "https://tasselmi.github.io/keynote/"
 date:       2015-07-09
 author:     "Hux"
 tags:
@@ -12,4 +12,4 @@ tags:
 ---
 
 
-> 下滑这里查看更多内容
+> abcde
