@@ -1,4 +1,4 @@
-.idea*
-.jekyll-cache*
-.DS_S*
+./idea
+./jekyll-cache*
+./DS_S*
 ._*
