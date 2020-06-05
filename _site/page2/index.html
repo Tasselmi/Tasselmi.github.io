@@ -110,6 +110,8 @@
                     
                     
                     
+                    
+                    
                 </ul>
             </div>
         </div>
@@ -211,6 +213,212 @@
             ">
     			
 <div class="post-preview">
+    <a href="/2018/12/13/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B2/">
+        <h2 class="post-title">
+            从零开始部署个人网站上线之2
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————jekyll + Hux Blog Theme + Tomcat
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+
+
+
+5. 在本地电脑和服务器间传输数据/文件
+
+ 
+
+
+  关于在服务器和本地之间传输数据或文件，网上资料很多，比如借助第三方软件等。这里介绍的方法不使用软件，而是直接使用ssh来实现连接和传输。
+如果需要将文件传输到指定文件夹下，可以先用命令ssh root@your_public_ip_address并输入密码来远程登录服务器，并使用mkdir dirB来创建目标文件夹。
+
+
+5.1...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 13, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/12/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B1/">
+        <h2 class="post-title">
+            从零开始部署个人网站上线之1
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————jekyll + Hux Blog Theme + Tomcat
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。
+
+
+
+ 
+ 
+
+1. 购买阿里云ESC服务器
+
+这个...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 12, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/10/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B10-%E6%95%B0%E6%8D%AE%E7%BC%93%E5%AD%98%E5%8F%8A%E4%BF%A1%E5%8F%B7%E5%8F%91%E9%80%81/">
+        <h2 class="post-title">
+            Python Dash十讲之10 - 数据缓存及信号发送
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————flask cache & redis
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                上面(第9讲)提到的解决方案可以更进一步：
+
+  将需要进行复杂计算的数据缓存起来（比如一个下拉框有多个选项，每个下拉框对应着一个复杂图形和数据IO，如果重复选择下拉框来控制图形变化，会涉及到重复IO和数据计算）
+  只要每个图形被加载过一次，那么不同用户打开同样的内容不需要再进行二次计算，直接读取缓存即可；这样任何需要重复加载的内容只要首次加载后，在此加载的速度均会显著提升
+
+
+基本缓存流...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 10, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/10/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B9-%E5%85%83%E7%B4%A0%E9%97%B4%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2/">
+        <h2 class="post-title">
+            Python Dash十讲之9 - 元素间数据交换
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————用hidden div来存储中间数据
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                设想如下1个需求：
+
+  从数据库读取数据，数据量较大；然后将数据以Excel表格形式呈现在网页上
+  数据表格可下载原始数据
+  将其中部分数据或者全部数据以可视化图形方式呈现在网页上，需要呈现多个图形
+  要求所有图形和表格按照一定频率定时自动刷新，下载的原始数据也必须是最新的数据
+
+
+
+  需求分析：因为需要定时刷新，所以需要用到上面讲的监听 n_intervals 来实现（如果不监听...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 10, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/10/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B8-%E5%A4%9A%E9%A1%B5DASH-APP/">
+        <h2 class="post-title">
+            Python Dash十讲之8 - 多页DASH APP
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————页面间切换跳转、工程结构、代码示例
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  上面提到的APP都是单一页面的，即不存在页面之间的跳转，下面看一下多个页面的APP是如何实现的。
+
+
+
+  多页面APP的实现原理
+    
+      dash app的页面间切换，其实可以理解为文件路径的切换
+      一个 .py 文件为一个页面，每个 .py 文件有自己独立的内容
+      通过回调函数，将文件的 url 地址作为输入，将文件的内容（layout）作为输出，...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 10, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/09/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B7-%E5%AE%9E%E6%97%B6%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%E5%85%83%E7%B4%A0/">
+        <h2 class="post-title">
+            Python Dash十讲之7 - 实时刷新页面元素
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————控制页面元素刷新频率
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  dash app的实时刷新功能主要依赖于 dash_core_components.Interval， 将Interval元素作为回调函数的输入，需要实时刷新的元素的相关属性值作为输出，通过监听Interval元素的 n_intervals 属性从而实现APP的动态自动更新。Interval元素的interval属性可以控制刷新频率，该属性单位为毫秒，取整数值。例如需要APP每分钟刷新...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 9, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2018/12/08/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B6-%E5%9C%A8dash-app%E4%B8%AD%E6%B7%BB%E5%8A%A0%E9%9D%99%E6%80%81%E5%85%83%E7%B4%A0/">
+        <h2 class="post-title">
+            Python Dash十讲之6 - 在DASH APP中添加静态元素
+        </h2>
+        
+        <h3 class="post-subtitle">
+            ————添加.html/.png等格式静态文件
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  在dash app中添加静态元素非常简单——将静态元素放在某个目录下并引入dash app中即可。
+
+
+一般来说，需要在 .py 所在文件夹中新建一个文件夹命名为 assets ，也就是说.py 文件和assets文件夹在同一目录下（前面dash元素排版中已经提到过，typography.css 文件也在此文件夹下）。当然，也可以遵从自己的个人喜好建立一个文件夹，然后在dash app...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by LiangFan on December 8, 2018
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
     <a href="/2018/12/07/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B5-%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%A1%A8%E6%A0%BCdash_table.DataTable/">
         <h2 class="post-title">
             Python Dash十讲之5 - 交互式表格dash_table.DataTable
@@ -289,153 +497,6 @@ dash中实现交互的逻辑非常简单，即调用回调函数@app.callback，
 </div>
 <hr>
 
-<div class="post-preview">
-    <a href="/2018/12/06/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B2-Dash%E5%85%83%E7%B4%A0%E6%8E%92%E7%89%88/">
-        <h2 class="post-title">
-            Python Dash十讲之2 — Dash元素排版
-        </h2>
-        
-        <h3 class="post-subtitle">
-            ————页面元素/图表局部、CSS、Style
-        </h3>
-        
-        <div class="post-content-preview">
-            
-                
-  dash中的dcc.Graph 也就是图形元素只能通过图形自带的参数来调整形状、颜色、位置等。其它元素既可以通过dash内置参数来调整，也可以通过外置的CSS文件来控制。
-
-
-通过内置的style属性来控制元素格式：
-
-1
-2
-3
-4
-5
-6
-7
-8
-html.P(
-    children='I am Chinese, I love my motherland.',
-    id='...
-            
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by LiangFan on December 6, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2018/12/05/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B1-Dash%E6%A6%82%E8%BF%B0/">
-        <h2 class="post-title">
-            Python Dash十讲之1 — Python Dash概述
-        </h2>
-        
-        <h3 class="post-subtitle">
-            ————初识Python数据可视化前端框架Dash
-        </h3>
-        
-        <div class="post-content-preview">
-            
-                
-  Python Dash是html网页元素和图表的python实现，它通过将html元素简化成python对象，使得作者可以通过python代码优雅的编写网页，从而能够更加专注于网页排版及网页内容而不是元素实现本身。非常适合做在线数据可视化和自动化报表。
-
-
-Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Components， D...
-            
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by LiangFan on December 5, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2018/12/02/Python%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/">
-        <h2 class="post-title">
-            Python数据科学学习路径
-        </h2>
-        
-        <h3 class="post-subtitle">
-            Python、numpy、pandas、plotly、dash、sk-learn
-        </h3>
-        
-        <div class="post-content-preview">
-            
-                
-  我们学习任何东西，都要心中有一幅地图，意思就是说你得对自己学习的事情有一个大概框架，这样你才能将宏伟的蓝图分解，坚持学习并最终形成系统性的知识；同时，心中有图，你就有了方向，不至于迷路和遗漏。遇到很多童鞋，学了一大通，学习时间也不短，但是还是没有形成对于一个知识点的整体认知，原因就是学习没有章法。也遇到很多同学，学了一段时间后感到迷茫，不知道何以为继，原因就是不知道了学了有什么用，或者...
-            
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by LiangFan on December 2, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2018/11/30/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E6%96%87/">
-        <h2 class="post-title">
-            我的第一篇博文
-        </h2>
-        
-        <h3 class="post-subtitle">
-            ————读书深心，修德忘名
-        </h3>
-        
-        <div class="post-content-preview">
-            
-                
-  今天是2018年11月30日周五，现在是晚上10点30，同事们都走的差不多了。经过各种折腾和磨难，终于是把自己的个人博客网站给部署上线了，个中心酸滋味，自是旁人无法理解。
-
-
-
-  一直想有一个自己的空间，可以写点什么，记录些什么，今天终于成真。特书文一篇，是以为记。
-
-
- 
-记录工作
-
-工作7年啦。2011年7月14日参加的工作，这个日期现在还是记忆清晰。
-
-这几年我一直在想一个问题...
-            
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by LiangFan on November 30, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2015/07/09/js-module-7day/">
-        <h2 class="post-title">
-            JavaScript 模块化七日谈
-        </h2>
-        
-        <h3 class="post-subtitle">
-            🎞  Slides:JavaScript Modularization Journey
-        </h3>
-        
-        <div class="post-content-preview">
-            
-                
-  下滑这里查看更多内容
-
-
-            
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Hux on July 9, 2015
-    </p>
-</div>
-<hr>
-
 
 <!-- Pager -->
 
@@ -445,6 +506,10 @@ Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Compon
         <a href="/">&larr; Newer Posts</a>
     </li>
     
+    
+    <li class="next">
+        <a href="/page3">Older Posts &rarr;</a>
+    </li>
     
 </ul>
 
@@ -472,95 +537,50 @@ Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Compon
         </a>
         
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=Slides"
-                    title="Slides"
-                    rel="1">Slides</a>
-        
-                <a data-sort="0007" 
+                <a data-sort="0014" 
                     href="/archive/?tag=Python"
                     title="Python"
                     rel="11">Python</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
                     title="数据可视化"
                     rel="10">数据可视化</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=Dash"
                     title="Dash"
                     rel="10">Dash</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
                     href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
                     title="个人网站"
-                    rel="4">个人网站</a>
+                    rel="6">个人网站</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
                     href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
                     title="阿里云服务器"
-                    rel="4">阿里云服务器</a>
+                    rel="5">阿里云服务器</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0021" 
                     href="/archive/?tag=Tomcat"
                     title="Tomcat"
                     rel="4">Tomcat</a>
         
-                <a data-sort="0014" 
-                    href="/archive/?tag=jekyll"
-                    title="jekyll"
-                    rel="4">jekyll</a>
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
-                    title="学习"
-                    rel="1">学习</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C"
-                    title="工作"
-                    rel="1">工作</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4"
-                    title="工作思维"
-                    rel="1">工作思维</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BC%80%E7%AF%87%E8%AF%AD"
-                    title="开篇语"
-                    rel="1">开篇语</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BD%92%E7%BA%B3"
-                    title="归纳"
-                    rel="1">归纳</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6"
-                    title="数据科学"
-                    rel="1">数据科学</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%BC%94%E7%BB%8E"
-                    title="演绎"
-                    rel="1">演绎</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
-                    title="生活"
-                    rel="1">生活</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=JavaScript"
-                    title="JavaScript"
-                    rel="1">JavaScript</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=Web"
-                    title="Web"
-                    rel="1">Web
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
     </div>
 </section>
 
@@ -620,8 +640,6 @@ Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Compon
   
   <li><a href="http://mida.re/">乱序</a></li>
   
-  <li><a href="http://qianduan.guru/">前端外刊评论</a></li>
-  
   <li><a href="http://lingyu.wang/">天镶的博客</a></li>
   
   <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
@@ -629,14 +647,6 @@ Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Compon
   <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
   
   <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
-  
-  <li><a href="https://www.ruoyaowu.com/">David's Game</a></li>
-  
-  <li><a href="http://dhong.co">DHong Say</a></li>
-  
-  <li><a href="http://ingf.github.io/">尹峰以为</a></li>
-  
-  <li><a href="http://xieminis.me/">解旻的博客</a></li>
   
 </ul>
 
@@ -687,7 +697,7 @@ Python Dash有两个主要构成元素：Dash Core Components和Dash HTML Compon
 </ul>
 
                 <p class="copyright text-muted">
-                    Copyright &copy; LiangFan's Blog 2018
+                    Copyright &copy; LiangFan's Blog 2020
                     <br>
                     Powered by <a href="http://huangxuan.me">Hux Blog</a> |
                     <iframe

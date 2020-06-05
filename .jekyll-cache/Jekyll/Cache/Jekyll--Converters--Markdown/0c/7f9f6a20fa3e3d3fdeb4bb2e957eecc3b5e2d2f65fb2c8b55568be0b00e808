@@ -1,0 +1,4 @@
+I"�<blockquote>
+  <p>考虑到可视化，dcc.Graph应该是dash中的最核心的要素，而dcc.Graph使用的是plotly框架中的原生图表，也就是说plotly代码是直接可以放到dash中使用的。而plotly图表又是兼容python matplotlib的，因此可以说只要是能想出来的图形，都能够在dash中实现并放入网页中。唯一的缺憾是，plotly对于中国地图的支持比较薄弱，对于美国地图则相对较为完善，因此如果需要画中国区域地图的，可以考虑先用对中国地图支持较好的百度 pyecharts 将地图渲染成html静态文件，再将html文件插入dash app中。关于如何插入静态文件，后面也会有详细论述。</p>
+</blockquote>
+:ET

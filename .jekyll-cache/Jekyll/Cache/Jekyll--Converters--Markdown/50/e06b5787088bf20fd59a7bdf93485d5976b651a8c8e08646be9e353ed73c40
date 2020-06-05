@@ -1,0 +1,47 @@
+I"�<p>由于ClickHouse是不支持Windows系统的，所以只能安装在Linux或者Mac OSX系统上。如果Windows用户需要尝试的话，需要通过虚拟机或者其它方式安装。本文将一步步带领Linux用户和Mac OSX用户从零开始安装部署单机版ClickHouse。</p>
+
+<p>根据官网的描述，ClickHouse可以运行在任何Linux系统上，前提是支持SSE 4.2；ClickHouse可以运行在64位Mac OSX上；暂不支持Windows；以下为官网原话：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>ClickHouse can run on any Linux, FreeBSD or Mac OS X with x86_64 CPU architecture.Though pre-built binaries are typically compiled to leverage SSE 4.2 instruction set, so unless otherwise stated usage of CPU that supports it becomes an additional system requirement.
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>ubuntu系统安装ClickHouse需如下几步：</p>
+
+<h4 id="1-查看当前cpu是否支持sse-42">1. 查看当前CPU是否支持SSE 4.2</h4>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nb">grep</span> <span class="nt">-q</span> sse4_2 /proc/cpuinfo <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">"SSE 4.2 supported"</span> <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"SSE 4.2 not supported"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h4 id="2-将clickhouse-repo添加到etcaptsourceslist文件">2. 将ClickHouse repo添加到/etc/apt/sources.list文件</h4>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nb">sudo </span>vi /etc/apt/sources.list
+<span class="nb">paste </span>deb http://repo.yandex.ru/clickhouse/deb/stable/ main/ into the file.
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h4 id="3-下载和安装clickhouse">3. 下载和安装ClickHouse</h4>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>clickhouse-client clickhouse-server
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h4 id="4-启动和停止clickhouse">4. 启动和停止ClickHouse</h4>
+<p>1）后台守护模式运行和停止：</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nb">sudo </span>service clickhouse-server start
+<span class="nb">sudo </span>service clickhouse-server stop
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>关于这里的命令比如start或者stop，自己可以看下文件里面的.sh文件就大概能推断一二了。</p>
+
+<p>2）Terminal打印日志模式运行：</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>clickhouse-server <span class="nt">--config-file</span><span class="o">=</span>/etc/clickhouse-server/config.xml
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>这个模式下停止直接用<code class="language-plaintext highlighter-rouge">ctrl+C</code>就行了，与其它软件类似。</p>
+
+<p>3）运行clickhouse-client：
+./clickhouse-client</p>
+
+<p>server和client一个是服务端，一个是客户端，这个应该是很好理解的，与单机版的 mysql 类似。</p>
+
+<p>如果觉得每次需要cd到文件目录来启动很麻烦，还可以把<code class="language-plaintext highlighter-rouge">clickhouse-client</code> 和 <code class="language-plaintext highlighter-rouge">clickhouse-server</code>添加到系统路径中，这样就比较方便了。</p>
+
+:ET

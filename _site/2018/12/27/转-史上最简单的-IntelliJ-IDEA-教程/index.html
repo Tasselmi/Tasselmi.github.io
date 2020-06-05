@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="「转」史上最简单的 IntelliJ IDEA 教程 - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="前言
+">
+    
+    <meta property="article:published_time" content="2018-12-27T20:00:00Z">
+    
+    
+    <meta property="article:author" content="LiangFan">
+    
+    
+    <meta property="article:tag" content="IntelliJ IDEA">
+    
+    <meta property="article:tag" content="配色方案">
+    
+    <meta property="article:tag" content="实用教程">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/2018/12/27/%E8%BD%AC-%E5%8F%B2%E4%B8%8A%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-IntelliJ-IDEA-%E6%95%99%E7%A8%8B/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>「转」史上最简单的 IntelliJ IDEA 教程 - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2018/12/27/%E8%BD%AC-%E5%8F%B2%E4%B8%8A%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-IntelliJ-IDEA-%E6%95%99%E7%A8%8B/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/my-post/07.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/my-post/07.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=IntelliJ+IDEA" title="IntelliJ IDEA">IntelliJ IDEA</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E9%85%8D%E8%89%B2%E6%96%B9%E6%A1%88" title="配色方案">配色方案</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B" title="实用教程">实用教程</a>
+                        
+                    </div>
+                    <h1>「转」史上最简单的 IntelliJ IDEA 教程</h1>
+                    
+                    <h2 class="subheading">————好学若饥，谦卑若愚</h2>
+                    <span class="meta">Posted by LiangFan on December 27, 2018</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<h2 id="前言">前言</h2>
+
+<p>　　IntelliJ IDEA（简称 IDEA），是 Java 语言开发的集成环境，IDEA 在业界被公认为最好的 Java 开发工具之一，尤其在智能代码助手、代码自动提示、重构、J2EE 支持、各类版本工具（Git、SVN、GitHub 等）、JUnit、CVS 整合、代码分析和创新的 GUI 设计等方面的功能都值得称道。至于 Eclipse 本人接触的不多，因此也无法比较，但殊途同归，无论选择什么集成开发环境，都是为了辅助咱们编程，所以可以说：<strong>没有最好的工具，只有最适合自己的工具</strong>。因此，撰写本系列文章的目的很简单，就是想把自己的经验整理记录下来，当然，如果能够在此基础上帮助大家快速入门并掌握 Intellij IDEA 那就再好不过啦！</p>
+
+<ul>
+  <li><strong>温馨提示</strong>：此教程使用的工具为<code class="language-plaintext highlighter-rouge">IntelliJ IDEA 2017(.1.5)</code>版本</li>
+  <li><strong>官网地址</strong>：http://www.jetbrains.com/idea/download</li>
+</ul>
+
+<h2 id="索引">索引</h2>
+
+<ul>
+  <li><a href="#基础教程">基础教程</a></li>
+  <li><a href="#实用技巧">实用技巧</a></li>
+  <li><a href="#疑难杂症">疑难杂症</a></li>
+  <li><a href="#星路历程">星路历程</a></li>
+</ul>
+
+<h2 id="基础教程">基础教程</h2>
+
+<ul>
+  <li>安装 IDE 的方法
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/install-intellij-idea-on-windows.md">基于 Windows 系统安装 IntelliJ IDEA 的方法</a></li>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/install-pycharm-on-mac.md">基于 Mac 系统安装 PyCharm 的方法</a></li>
+    </ul>
+  </li>
+  <li>初识 IDEA 的世界
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/first-run-idea.md">首次运行 IntelliJ IDEA 示例</a></li>
+    </ul>
+  </li>
+  <li>核心文件讲解
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/core-file-talk.md">IntelliJ IDEA 安装目录的核心文件讲解</a></li>
+    </ul>
+  </li>
+  <li>使用界面介绍
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/use-face.md">详述 IntelliJ IDEA 的使用界面</a></li>
+    </ul>
+  </li>
+  <li>第一个项目 HelloWorld
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/hello-world.md">HelloWorld 项目创建及相关配置文件介绍</a></li>
+    </ul>
+  </li>
+  <li>设置主题和字体
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/theme-and-font.md">设置 IntelliJ IDEA 主题和字体的方法</a></li>
+    </ul>
+  </li>
+  <li>模板注释
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/modify-user-template.md">修改 IntelliJ IDEA 模板注释的内容</a></li>
+    </ul>
+  </li>
+  <li>常见图标介绍
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/idea-icon.md">常见文件类型的图标介绍</a></li>
+    </ul>
+  </li>
+  <li>缓存及索引
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/index-and-cache.md">缓存和索引的介绍及清理方法</a></li>
+    </ul>
+  </li>
+  <li>编译方式
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/compile-method.md">编译方式介绍及编译器的设置和选择</a></li>
+    </ul>
+  </li>
+  <li>代码调试
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/debug-skills.md">详述 IntelliJ IDEA 之 Debug 篇</a></li>
+    </ul>
+  </li>
+  <li>多模块项目
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/project-module.md">IntelliJ IDEA 中 Project 和 Module 的概念及区别</a></li>
+    </ul>
+  </li>
+  <li>版本控制
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/version-control.md">详述 IntelliJ IDEA 中的版本控制机制</a></li>
+    </ul>
+  </li>
+  <li>插件
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/plugins.md">详述 IntelliJ IDEA 插件的安装及使用方法</a></li>
+    </ul>
+  </li>
+  <li>创建 Maven 项目
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/maven-project.md">详述 IntelliJ IDEA 创建 Maven 项目及设置 java 源目录的方法</a></li>
+    </ul>
+  </li>
+  <li>搭建 Spring MVC 框架
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/basic-course/run-maven-springmvc.md">IntelliJ IDEA 中的 Maven 项目初体验及搭建 Spring MVC 框架</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="实用技巧">实用技巧</h2>
+
+<ul>
+  <li>快捷键
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/keymap-mac.md">Mac</a></li>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/keymap-windows.md">Windows</a></li>
+    </ul>
+  </li>
+  <li>恢复代码
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/recovery-code.md">详述 IntelliJ IDEA 中恢复代码的方法</a></li>
+    </ul>
+  </li>
+  <li>中文乱码问题
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/solve-garbled-questions.md">IntelliJ IDEA 控制台输出中文乱码问题的解决方法</a></li>
+    </ul>
+  </li>
+  <li>序列化
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/serialVersionUID.md">详述 IntelliJ IDEA 中自动生成 serialVersionUID 的方法</a></li>
+    </ul>
+  </li>
+  <li>代码审查
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/code-analysis.md">详述 IntelliJ IDEA 提交代码前的 Code Analysis 机制</a></li>
+    </ul>
+  </li>
+  <li>版本管理
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/schedule.md">关于 IntelliJ IDEA 中 Schedule for Addition 的问题</a></li>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/version-control-color-tips.md">详述 IntelliJ IDEA 版本控制不显示颜色提示的解决方法</a></li>
+    </ul>
+  </li>
+  <li>彩色代码主题
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/color-code.md">手把手教你设置 IntelliJ IDEA 彩色代码主题</a></li>
+    </ul>
+  </li>
+  <li>远程调试
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/the-method-of-remote-debugging-with-idea.md">详述 IntelliJ IDEA 远程调试 Tomcat 的方法</a></li>
+    </ul>
+  </li>
+  <li>代码对比
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/compare-code.md">利用 IntelliJ IDEA 进行代码对比的方法</a></li>
+    </ul>
+  </li>
+  <li>依赖冲突
+    <ul>
+      <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/conflict-jar.md">详述使用 IntelliJ IDEA 解决 jar 包冲突的问题</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="疑难杂症">疑难杂症</h2>
+
+<ul>
+  <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/difficult-cases/java-source.md">详述 IntelliJ IDEA 遇到 java -source 1.3 中不支持某某操作的解决方法</a></li>
+  <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/difficult-cases/java-launch-helper.md">详述 IntelliJ IDEA 遇到 JavaLaunchHelper 多种实现的解决方法</a></li>
+  <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/difficult-cases/keymap-delete.md">详述 IntelliJ IDEA 遇到快捷键以及删除键不好使的解决方法</a></li>
+  <li><a href="https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/difficult-cases/unable-import-maven-project.md">详述 IntelliJ IDEA 遇到 Maven 项目打开（Open）或者导入（Import）失败的解决方法</a></li>
+</ul>
+
+<h2 id="星路历程">星路历程</h2>
+
+<p><a href="https://starcharts.herokuapp.com/guobinhit/intellij-idea-tutorial"><img src="https://starcharts.herokuapp.com/guobinhit/intellij-idea-tutorial.svg" alt="Stargazers over time" /></a></p>
+
+<h2 id="致谢">致谢</h2>
+
+<p>　　作为一个初学者，刚接触 IntelliJ IDEA 的时候，就有幸阅读了 <a href="https://github.com/judasn">@Judas.n</a> 写的关于 IntelliJ IDEA 的教程，也获益良多。在此感谢 Judas.n 写的教程对我的启发，本教程也对 Judas.n 写的教程多有借鉴，下面附上其 GitHub 地址，欢迎感兴趣的童鞋移步到 Judas.n 的教程观摩学习。</p>
+
+<ul>
+  <li>IntelliJ-IDEA-Tutorial: https://github.com/judasn/IntelliJ-IDEA-Tutorial</li>
+</ul>
+
+<hr />
+<p>此外，附上一句格言，望共勉：<strong>好学若饥，谦卑若愚。</strong></p>
+
+<ul>
+  <li><a href="#索引">↑↑↑   返回顶部（RETURN THE TOP）  ↑↑↑</a></li>
+</ul>
+
+<p> </p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/26/%E5%88%A9%E7%94%A8Nginx%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/" data-toggle="tooltip" data-placement="top" title="利用Nginx部署个人网站">
+                        Previous<br>
+                        <span>利用Nginx部署个人网站</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="6">个人网站</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="5">阿里云服务器</a>
+        
+                <a data-sort="0021" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/27/「转」史上最简单的 IntelliJ IDEA 教程";
+    var disqus_url = "http://localhost:4000/2018/12/27/%E8%BD%AC-%E5%8F%B2%E4%B8%8A%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-IntelliJ-IDEA-%E6%95%99%E7%A8%8B/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

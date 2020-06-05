@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="利用Nginx部署个人网站 - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="
+  之前的文章中已将讲到过用Tomcat作为app代理来部署静态个人网站了，本文尝试用nginx方案再部署一次。
+
+">
+    
+    <meta property="article:published_time" content="2018-12-26T20:00:00Z">
+    
+    
+    <meta property="article:author" content="LiangFan">
+    
+    
+    <meta property="article:tag" content="jekyll">
+    
+    <meta property="article:tag" content="Nginx">
+    
+    <meta property="article:tag" content="阿里云服务器">
+    
+    <meta property="article:tag" content="个人网站">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/2018/12/26/%E5%88%A9%E7%94%A8Nginx%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>利用Nginx部署个人网站 - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2018/12/26/%E5%88%A9%E7%94%A8Nginx%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/my-post/07.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/my-post/07.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=jekyll" title="jekyll">jekyll</a>
+                        
+                        <a class="tag" href="/archive/?tag=Nginx" title="Nginx">Nginx</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8" title="阿里云服务器">阿里云服务器</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99" title="个人网站">个人网站</a>
+                        
+                    </div>
+                    <h1>利用Nginx部署个人网站</h1>
+                    
+                    <h2 class="subheading">————集群、分布式、并行计算</h2>
+                    <span class="meta">Posted by LiangFan on December 26, 2018</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<blockquote>
+  <p>之前的文章中已将讲到过用Tomcat作为app代理来部署静态个人网站了，本文尝试用nginx方案再部署一次。</p>
+</blockquote>
+
+<p>虽然Tomcat和Nginx是不同的东西（前者是APP层面的服务器代理，后者是http-server协议层面的代理），但是二者均可以用来代理静态网页，而且均比较简单。由于nginx比较流行，本文尝试用nginx实现。</p>
+
+<h4 id="1-安装nginx">1. 安装nginx</h4>
+<p>ubuntu下安装命令如下：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>sudo apt-get install nginx
+apt-get update --fix-missing
+
+nginx -v
+// nginx version: nginx/1.10.3 (Ubuntu)
+
+nginx
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>根据上面的命令安装后，发现启动会报错，因此参考了一些网络资料。</p>
+
+<p><a href="https://blog.csdn.net/shmilychan/article/details/72773270">一方面参考了这里。</a></p>
+
+<p>另一方面参考了下面的命令（我是通过这个安装成功的，按照后面的指引将之前的给卸载然后通过下面的命令安装）：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre></td><td class="rouge-code"><pre>sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:nginx/stable 
+sudo apt-get update
+sudo apt-get install nginx
+
+
+安装 sudo apt-get install nginx
+
+启动 sudo /etc/init.d/nginx start
+
+停止 sudo sudo /etc/init.d/nginx stop
+
+root配置 sudo vim /etc/nginx/sites-available/default  
+
+设置文件路径，修改这个字段的值 root /usr/share/nginx/www;
+
+设置日志，修改这个字段 access_log /var/log/nginx.log;
+
+关闭favicon.ico找不到的日志，修改这个：
+
+location = /favicon.ico {
+            log_not_found off;
+        }
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>mac下安装命令如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>//先安装homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+//查询要安装的软件是否存在
+brew search nginx   
+
+//查看是否安装以及安装源等信息
+brew info nginx
+
+//开始安装，安装完后会显示配置文件、运行文件的安装路径等信息
+brew install nginx
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>观察可发现配置文件在 <code class="language-plaintext highlighter-rouge">/usr/local/etc/nginx/nginx.conf</code>路径。</p>
+
+<h4 id="2-安装jekyll和hux-blog-theme">2. 安装jekyll和Hux Blog Theme</h4>
+
+<p>安装好jekyll和Hux Blog Theme后，就可以写博文了，然后编译，编译后的静态文件会在_site文件夹下。</p>
+
+<p><a href="http://liangfan.tech/2018/12/18/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B3/">具体可以参考这里，我以前写的文章。</a></p>
+
+<p>接着将<code class="language-plaintext highlighter-rouge">_site</code>文件夹上传到服务器。</p>
+
+<h4 id="3-修改nginx配置">3. 修改nginx配置</h4>
+<p>将<code class="language-plaintext highlighter-rouge">nginx.conf</code>文件中的<code class="language-plaintext highlighter-rouge">root</code>修改为<code class="language-plaintext highlighter-rouge">_site</code>文件夹的路径。</p>
+
+<p>具体看下面：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+</pre></td><td class="rouge-code"><pre>listen       8080;
+server_name  localhost;
+
+charset utf-8;
+
+#access_log  logs/host.access.log  main;
+
+location / {
+    root   html;
+    index  index.html index.htm;
+}
+
+
+// 修改为：
+
+
+listen       80;
+server_name  你的局域网ip或者username;
+
+charset utf-8;
+
+#access_log  logs/host.access.log  main;
+
+location / {
+    root   /my-blog/_site;
+    index  index.html index.htm;
+}
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>使用nginx命令运行nginx，并打开自己的域名，博客就部署成功了。</p>
+
+<p>nginx启动停止命令：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>nginx -s reload
+nginx -s stop
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><a href="https://blog.csdn.net/adley_app/article/details/79223221">删除或者卸载nginx参考这里：</a></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre>ps -A | grep nginx
+
+sudo service nginx stop
+
+sudo apt-get --purge remove nginx
+sudo apt-get autoremove
+dpkg --get-selections|grep nginx
+
+sudo apt-get --purge remove nginx-common
+sudo apt-get --purge remove nginx-core
+sudo apt-get --purge remove nginx
+dpkg --get-selections|grep nginx
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>如果运行的过程中莫名其妙报错：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>执行 service nginx start或者restart命令出现错误
+
+service nginx restart
+Job for nginx.service failed because the control process exited with error code. See "systemctl status nginx.service" and "journalctl -xe" for details.
+莫名奇妙的出现了这个错误，查看logs也没什么发现，之后就停止了nginx的进程，再运行service nginx start，又可以了，具体出错原因现在还不清楚。
+
+查看nginx进程命令
+
+ps -A | grep  nginx
+
+pkill -9 nginx
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p> </p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B3-%E7%90%86%E8%A7%A3%E9%9B%86%E7%BE%A4%E7%9A%84%E6%A6%82%E5%BF%B5/" data-toggle="tooltip" data-placement="top" title="深入理解ClickHouse之3-理解集群的概念">
+                        Previous<br>
+                        <span>深入理解ClickHouse之3-理解集群的概念</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/12/27/%E8%BD%AC-%E5%8F%B2%E4%B8%8A%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84-IntelliJ-IDEA-%E6%95%99%E7%A8%8B/" data-toggle="tooltip" data-placement="top" title="「转」史上最简单的 IntelliJ IDEA 教程">
+                        Next<br>
+                        <span>「转」史上最简单的 IntelliJ IDEA 教程</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="6">个人网站</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="5">阿里云服务器</a>
+        
+                <a data-sort="0021" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/26/利用Nginx部署个人网站";
+    var disqus_url = "http://localhost:4000/2018/12/26/%E5%88%A9%E7%94%A8Nginx%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

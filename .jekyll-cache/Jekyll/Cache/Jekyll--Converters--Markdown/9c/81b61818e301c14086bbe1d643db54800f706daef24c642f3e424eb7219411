@@ -1,0 +1,537 @@
+I"��<blockquote>
+  <p>考虑到可视化，dcc.Graph应该是dash中的最核心的要素，而dcc.Graph使用的是plotly框架中的原生图表，也就是说plotly代码是直接可以放到dash中使用的。而plotly图表又是兼容python matplotlib的，因此可以说只要是能想出来的图形，都能够在dash中实现并放入网页中。唯一的缺憾是，plotly对于中国地图的支持比较薄弱，对于美国地图则相对较为完善，因此如果需要画中国区域地图的，可以考虑先用对中国地图支持较好的百度 pyecharts 将地图渲染成html静态文件，再将html文件插入dash app中。关于如何插入静态文件，后面也会有详细论述。</p>
+</blockquote>
+
+<p>下面展示一些核心图表，更多图表可自行到<a href="https://plot.ly/python/">https://plot.ly/python/</a>学习。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span>   <span class="c1">#引入dash核心元素
+</span><span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>   <span class="c1">#引入dash html元素
+</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span><span class="s">'city'</span><span class="p">:</span> <span class="s">'hangzhou'</span><span class="p">,</span> <span class="s">'man'</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s">'woman'</span><span class="p">:</span> <span class="mf">0.523</span><span class="p">,</span> <span class="s">'city-level'</span><span class="p">:</span> <span class="s">'2nd'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'city'</span><span class="p">:</span> <span class="s">'shanghai'</span><span class="p">,</span> <span class="s">'man'</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s">'woman'</span><span class="p">:</span> <span class="mf">0.26</span><span class="p">,</span> <span class="s">'city-level'</span><span class="p">:</span> <span class="s">'1st'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'city'</span><span class="p">:</span> <span class="s">'shenzhen'</span><span class="p">,</span> <span class="s">'man'</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s">'woman'</span><span class="p">:</span> <span class="mf">0.37</span><span class="p">,</span> <span class="s">'city-level'</span><span class="p">:</span> <span class="s">'1st'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'city'</span><span class="p">:</span> <span class="s">'wuhan'</span><span class="p">,</span> <span class="s">'man'</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span> <span class="s">'woman'</span><span class="p">:</span> <span class="mf">0.17</span><span class="p">,</span> <span class="s">'city-level'</span><span class="p">:</span> <span class="s">'2nd'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'city'</span><span class="p">:</span> <span class="s">'ningbo'</span><span class="p">,</span> <span class="s">'man'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">'woman'</span><span class="p">:</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s">'city-level'</span><span class="p">:</span> <span class="s">'3rd'</span><span class="p">},</span>
+<span class="p">])</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">()</span>
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+
+    <span class="c1"># 散点图
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-scatter'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'woman'</span><span class="p">],</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+                <span class="s">'mode'</span><span class="p">:</span> <span class="s">'markers'</span><span class="p">,</span>
+            <span class="p">}],</span>
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市女性占比'</span><span class="p">,</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.2%'</span><span class="p">},</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 折线图
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-line'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+                <span class="s">'mode'</span><span class="p">:</span> <span class="s">'lines+markers'</span><span class="p">,</span>
+            <span class="p">}],</span>
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 柱形图
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-bar'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+            <span class="p">}],</span>
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 横向柱形图
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-bar-horizontal'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+                <span class="s">'orientation'</span><span class="p">:</span> <span class="s">'h'</span>
+            <span class="p">}],</span>
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 饼图
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-pie'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'labels'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city-level'</span><span class="p">].</span><span class="n">value_counts</span><span class="p">().</span><span class="n">index</span><span class="p">,</span>
+                <span class="s">'values'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city-level'</span><span class="p">].</span><span class="n">value_counts</span><span class="p">().</span><span class="n">values</span><span class="p">,</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'pie'</span><span class="p">,</span>
+                <span class="s">'hoverinfo'</span><span class="p">:</span> <span class="s">'label+value+percent'</span><span class="p">,</span>
+                <span class="s">'hole'</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span>
+            <span class="p">}],</span>
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'title'</span><span class="p">:</span> <span class="s">'城市等级占比'</span><span class="p">,</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+        <span class="p">}</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 表格
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'graph-table'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'my_table'</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                <span class="s">'type'</span><span class="p">:</span> <span class="s">'table'</span><span class="p">,</span>
+                <span class="s">'columnwidth'</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+                <span class="s">'header'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">'values'</span><span class="p">:</span> <span class="p">[[</span><span class="s">'&lt;b&gt;{}&lt;/b&gt;'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">],</span>
+                    <span class="s">'font'</span><span class="p">:</span> <span class="p">{</span><span class="s">'size'</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s">'color'</span><span class="p">:</span> <span class="s">'white'</span><span class="p">,</span> <span class="p">},</span>
+                    <span class="s">'align'</span><span class="p">:</span> <span class="s">'center'</span><span class="p">,</span>
+                    <span class="s">'height'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+                    <span class="s">'fill'</span><span class="p">:</span> <span class="p">{</span><span class="s">'color'</span><span class="p">:</span> <span class="s">'#0076BA'</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s">'cells'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">'values'</span><span class="p">:</span> <span class="n">df</span><span class="p">.</span><span class="n">values</span><span class="p">.</span><span class="n">T</span><span class="p">,</span>
+                    <span class="s">'line'</span><span class="p">:</span> <span class="p">{</span><span class="s">'color'</span><span class="p">:</span> <span class="s">'rgb(50, 50, 50)'</span><span class="p">},</span>
+                    <span class="s">'align'</span><span class="p">:</span> <span class="s">'center'</span><span class="p">,</span>
+                    <span class="s">'height'</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+                    <span class="s">'fill'</span><span class="p">:</span> <span class="p">{</span><span class="s">'color'</span><span class="p">:</span> <span class="p">[</span><span class="s">'#56C1FF'</span><span class="p">,</span> <span class="s">'#f5f5fa'</span><span class="p">]},</span>
+                    <span class="s">'format'</span><span class="p">:</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s">'.2%'</span><span class="p">]</span>
+                <span class="p">},</span>
+            <span class="p">}],</span>
+
+            <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'height'</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
+                <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 图表排版
+</span>    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'graph-scatter2'</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                        <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                        <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'woman'</span><span class="p">],</span>
+                        <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+                        <span class="s">'mode'</span><span class="p">:</span> <span class="s">'markers'</span><span class="p">,</span>
+                    <span class="p">}],</span>
+                    <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市女性占比'</span><span class="p">,</span>
+                        <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                        <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.2%'</span><span class="p">},</span>
+                        <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'graph-line2'</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                        <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                        <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                        <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+                        <span class="s">'mode'</span><span class="p">:</span> <span class="s">'lines+markers'</span><span class="p">,</span>
+                    <span class="p">}],</span>
+                    <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                        <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                        <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                        <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+        <span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'width'</span><span class="p">:</span> <span class="s">'49%'</span><span class="p">,</span> <span class="s">'display'</span><span class="p">:</span> <span class="s">'inline-block'</span><span class="p">}),</span>
+
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'graph-bar2'</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                        <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                        <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                        <span class="s">'type'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+                    <span class="p">}],</span>
+                    <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                        <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                        <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                        <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'graph-bar-horizontal2'</span><span class="p">,</span>
+                <span class="n">className</span><span class="o">=</span><span class="s">'my_graph'</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+                        <span class="s">'x'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'man'</span><span class="p">],</span>
+                        <span class="s">'y'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">'city'</span><span class="p">],</span>
+                        <span class="s">'type'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+                        <span class="s">'orientation'</span><span class="p">:</span> <span class="s">'h'</span>
+                    <span class="p">}],</span>
+                    <span class="s">'layout'</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s">'title'</span><span class="p">:</span> <span class="s">'各城市男性人口'</span><span class="p">,</span>
+                        <span class="s">'height'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+                        <span class="s">'yaxis'</span><span class="p">:</span> <span class="p">{</span><span class="s">'hoverformat'</span><span class="p">:</span> <span class="s">'.0f'</span><span class="p">},</span>
+                        <span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">80</span><span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'displayModeBar'</span><span class="p">:</span> <span class="bp">False</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+        <span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'width'</span><span class="p">:</span> <span class="s">'49%'</span><span class="p">,</span> <span class="s">'display'</span><span class="p">:</span> <span class="s">'inline-block'</span><span class="p">}),</span>
+    <span class="p">]),</span>
+
+<span class="s">'''
+更复杂的图形如组合图、玫瑰图、sankey图等均可在plotly官网中找到
+各图形的形状、格式、图例等的调整也均可在官方文档中找到
+'''</span>
+
+<span class="p">])</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s">'8050'</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+:ET

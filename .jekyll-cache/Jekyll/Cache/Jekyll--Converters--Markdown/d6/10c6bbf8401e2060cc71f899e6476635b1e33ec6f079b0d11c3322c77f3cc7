@@ -1,0 +1,298 @@
+I"	S<p>上面(第9讲)提到的解决方案可以更进一步：</p>
+<ul>
+  <li>将需要进行复杂计算的数据缓存起来（比如一个下拉框有多个选项，每个下拉框对应着一个复杂图形和数据IO，如果重复选择下拉框来控制图形变化，会涉及到重复IO和数据计算）</li>
+  <li>只要每个图形被加载过一次，那么不同用户打开同样的内容不需要再进行二次计算，直接读取缓存即可；这样任何需要重复加载的内容只要首次加载后，在此加载的速度均会显著提升</li>
+</ul>
+
+<p>基本缓存流程为：</p>
+
+<p><img src="/img/my-post/20181210a.png" alt="Alt text" /></p>
+
+<p>代码示例如下：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span>
+<span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">dash.dependencies</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">flask_caching</span> <span class="kn">import</span> <span class="n">Cache</span>
+
+
+<span class="n">external_stylesheets</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Dash CSS
+</span>    <span class="s">'https://codepen.io/chriddyp/pen/bWLwgP.css'</span><span class="p">,</span>
+    <span class="c1"># Loading screen CSS
+</span>    <span class="s">'https://codepen.io/chriddyp/pen/brPBPO.css'</span><span class="p">]</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">external_stylesheets</span><span class="o">=</span><span class="n">external_stylesheets</span><span class="p">)</span>
+<span class="n">CACHE_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># try 'filesystem' if you don't want to setup redis
+</span>    <span class="s">'CACHE_TYPE'</span><span class="p">:</span> <span class="s">'redis'</span><span class="p">,</span>
+    <span class="s">'CACHE_REDIS_URL'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'REDIS_URL'</span><span class="p">,</span> <span class="s">'127.0.0.1:6379'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">()</span>
+<span class="n">cache</span><span class="p">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">.</span><span class="n">server</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">CACHE_CONFIG</span><span class="p">)</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s">'category'</span><span class="p">:</span> <span class="p">(</span>
+        <span class="p">([</span><span class="s">'apples'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">+</span>
+        <span class="p">([</span><span class="s">'oranges'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">+</span>
+        <span class="p">([</span><span class="s">'figs'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">+</span>
+        <span class="p">([</span><span class="s">'pineapples'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">})</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'x'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'category'</span><span class="p">]))</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'y'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">'category'</span><span class="p">]))</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+    <span class="n">dcc</span><span class="p">.</span><span class="n">Dropdown</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'dropdown'</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">[{</span><span class="s">'label'</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s">'value'</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s">'category'</span><span class="p">].</span><span class="n">unique</span><span class="p">()],</span>
+        <span class="n">value</span><span class="o">=</span><span class="s">'apples'</span>
+    <span class="p">),</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span><span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'graph-1'</span><span class="p">),</span> <span class="n">className</span><span class="o">=</span><span class="s">"six columns"</span><span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span><span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'graph-2'</span><span class="p">),</span> <span class="n">className</span><span class="o">=</span><span class="s">"six columns"</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">className</span><span class="o">=</span><span class="s">"row"</span><span class="p">),</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span><span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'graph-3'</span><span class="p">),</span> <span class="n">className</span><span class="o">=</span><span class="s">"six columns"</span><span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span><span class="n">dcc</span><span class="p">.</span><span class="n">Graph</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'graph-4'</span><span class="p">),</span> <span class="n">className</span><span class="o">=</span><span class="s">"six columns"</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">className</span><span class="o">=</span><span class="s">"row"</span><span class="p">),</span>
+
+    <span class="c1"># hidden signal value
+</span>    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'signal'</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'display'</span><span class="p">:</span> <span class="s">'none'</span><span class="p">})</span>
+<span class="p">])</span>
+
+
+<span class="c1"># perform expensive computations in this "global store"
+# these computations are cached in a globally available
+# redis memory store which is available across processes
+# and for all time.
+</span><span class="o">@</span><span class="n">cache</span><span class="p">.</span><span class="n">memoize</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">global_store</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="c1"># simulate expensive query
+</span>    <span class="k">print</span><span class="p">(</span><span class="s">'Computing value with {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">'category'</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">generate_figure</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">figure</span><span class="p">):</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
+    <span class="n">filtered_dataframe</span> <span class="o">=</span> <span class="n">global_store</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">[</span><span class="s">'data'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'x'</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_dataframe</span><span class="p">[</span><span class="s">'x'</span><span class="p">]</span>
+    <span class="n">fig</span><span class="p">[</span><span class="s">'data'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'y'</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_dataframe</span><span class="p">[</span><span class="s">'y'</span><span class="p">]</span>
+    <span class="n">fig</span><span class="p">[</span><span class="s">'layout'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">'margin'</span><span class="p">:</span> <span class="p">{</span><span class="s">'l'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s">'r'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s">'t'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}</span>
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'signal'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'dropdown'</span><span class="p">,</span> <span class="s">'value'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">compute_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="c1"># compute value and send a signal when done
+</span>    <span class="n">global_store</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'graph-1'</span><span class="p">,</span> <span class="s">'figure'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'signal'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_graph_1</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="c1"># generate_figure gets data from `global_store`.
+</span>    <span class="c1"># the data in `global_store` has already been computed
+</span>    <span class="c1"># by the `compute_value` callback and the result is stored
+</span>    <span class="c1"># in the global redis cached
+</span>    <span class="k">return</span> <span class="n">generate_figure</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+            <span class="s">'mode'</span><span class="p">:</span> <span class="s">'markers'</span><span class="p">,</span>
+            <span class="s">'marker'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">'opacity'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                <span class="s">'size'</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+                <span class="s">'line'</span><span class="p">:</span> <span class="p">{</span><span class="s">'border'</span><span class="p">:</span> <span class="s">'thin darkgrey solid'</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}]</span>
+    <span class="p">})</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'graph-2'</span><span class="p">,</span> <span class="s">'figure'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'signal'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_graph_2</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">generate_figure</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s">'type'</span><span class="p">:</span> <span class="s">'scatter'</span><span class="p">,</span>
+            <span class="s">'mode'</span><span class="p">:</span> <span class="s">'lines'</span><span class="p">,</span>
+            <span class="s">'line'</span><span class="p">:</span> <span class="p">{</span><span class="s">'shape'</span><span class="p">:</span> <span class="s">'spline'</span><span class="p">,</span> <span class="s">'width'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+        <span class="p">}]</span>
+    <span class="p">})</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'graph-3'</span><span class="p">,</span> <span class="s">'figure'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'signal'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_graph_3</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">generate_figure</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s">'type'</span><span class="p">:</span> <span class="s">'histogram2d'</span><span class="p">,</span>
+        <span class="p">}]</span>
+    <span class="p">})</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'graph-4'</span><span class="p">,</span> <span class="s">'figure'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'signal'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_graph_4</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">generate_figure</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s">'data'</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s">'type'</span><span class="p">:</span> <span class="s">'histogram2dcontour'</span><span class="p">,</span>
+        <span class="p">}]</span>
+    <span class="p">})</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'192.168.43.235'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8003</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p> 
+ </p>
+
+:ET

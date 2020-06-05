@@ -1,0 +1,86 @@
+I"�<blockquote>
+  <p>Python Dash是html网页元素和图表的python实现，它通过将html元素简化成python对象，使得作者可以通过python代码优雅的编写网页，从而能够更加专注于网页排版及网页内容而不是元素实现本身。非常适合做在线数据可视化和自动化报表。</p>
+</blockquote>
+
+<p>Python Dash有两个主要构成元素：<code class="language-plaintext highlighter-rouge">Dash Core Components</code>和<code class="language-plaintext highlighter-rouge">Dash HTML Components</code>， <code class="language-plaintext highlighter-rouge">Dash Core Components</code>是核心元素（底层通过React 和 JavaScript实现），它是tab、graphs、slider、dropdown等元素的抽象类和集合，如果想在页面添加一个下拉框，那么实例化一个dcc.Dropdown对象即可；Dash HTML Components是html元素，它是div、p、h1-h6等html元素（各类html元素可自行到<a href="https://www.w3cschool.cn/html/">https://www.w3cschool.cn/html/</a>探索）的抽象类和集合，如果想在页面添加一个div容器，那么实例化一个html.Div对象即可。一个网页的所有内容都是由这两类核心元素的实例化对象组成的。</p>
+
+<p>一个简短的dash app实现如下：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+</pre></td><td class="rouge-code"><pre><span class="c1"># pip3 install dash dash_core_components dash_html_components
+</span><span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span>   <span class="c1">#引入dash核心要素
+</span><span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>   <span class="c1">#引入dash html要素
+</span>
+<span class="c1"># 实例化一个dash app对象
+</span><span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">()</span>
+
+<span class="c1"># 编写app的框架和内容layout，layout是由dcc和html组成的列表填充的div
+</span><span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+
+    <span class="c1"># 实例化一个html p标签
+</span>    <span class="n">html</span><span class="p">.</span><span class="n">P</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="s">'I am Chinese, I love my motherland.'</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'my-1st-p-label'</span><span class="p">,</span>
+        <span class="n">className</span><span class="o">=</span><span class="s">'p-label'</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 实例化一个html 按钮
+</span>    <span class="n">html</span><span class="p">.</span><span class="n">Button</span><span class="p">(</span>
+        <span class="n">children</span><span class="o">=</span><span class="s">'点击提交'</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'my-button'</span>
+    <span class="p">),</span>
+
+    <span class="c1"># 实例化一个滑动器
+</span>    <span class="n">dcc</span><span class="p">.</span><span class="n">Slider</span><span class="p">(</span>
+        <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+        <span class="n">marks</span><span class="o">=</span><span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="s">'Label {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)},</span>
+        <span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="p">])</span>
+
+<span class="c1"># 运行app
+</span><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s">'8050'</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>更多 <code class="language-plaintext highlighter-rouge">Dash Core Components</code> 和<code class="language-plaintext highlighter-rouge">Dash HTML Components</code> 可自行根据官方文档学习探索。</p>
+:ET

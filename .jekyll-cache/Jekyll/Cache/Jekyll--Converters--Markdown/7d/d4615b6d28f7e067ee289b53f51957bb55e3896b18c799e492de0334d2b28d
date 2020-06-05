@@ -1,0 +1,155 @@
+I"�:<blockquote>
+  <p>所谓交互式是指，用户对APP施加行为能够影响或改变APP的外观或内容，行为能够得到反馈。比如，鼠标hover时候数据闪现、点击按钮生成新的数据和图表等，都属于交互。</p>
+</blockquote>
+
+<p>dash中实现交互的逻辑非常简单，即调用回调函数<code class="language-plaintext highlighter-rouge">@app.callback</code>，在回调函数中 <code class="language-plaintext highlighter-rouge">Input</code> 为被施加行为的元素， <code class="language-plaintext highlighter-rouge">Output</code> 为被影响的元素，也就是说Input是因，Output是果，对Input传入的值一番操作后，将值（回调函数返回值）传给Output进行输出。同一个元素只能在Output中出现一次，也就是说同一个元素不能被多个回调函数的Output调用，但一个Input可以调用多个回调函数——控制多个其它元素。如果多个元素同时控制一个元素，那么需要在一个回调函数中，输入多个Input。</p>
+
+<p>State可以记录元素的当前状态或值。比如记录当前图表被鼠标hover时候的值。State只能配合Input一起使用——输入行为的同时记录元素的状态值。</p>
+
+<p>Input使用方法为  <code class="language-plaintext highlighter-rouge">[Input('id', 'property')]</code> ；Output的使用方法为 <code class="language-plaintext highlighter-rouge">Output('id', 'property')</code> ；State的使用方法为 <code class="language-plaintext highlighter-rouge">[State('id', 'property'), State('id', 'property')]</code></p>
+
+<p>代码示例如下：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span>   
+<span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>   
+<span class="kn">from</span> <span class="nn">dash.dependencies</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">State</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">()</span>
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">H6</span><span class="p">(</span><span class="s">'请给我们反馈'</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'color'</span><span class="p">:</span> <span class="s">'red'</span><span class="p">,</span> <span class="s">'font-size'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s">'padding-left'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">'padding-top'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="p">}),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">P</span><span class="p">(</span><span class="s">'1.对于本月的月报，您的满意度评分是？（0-10分，分值越高越满意）'</span><span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Slider</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'slider_feedback'</span><span class="p">,</span>
+                <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">marks</span><span class="o">=</span><span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="s">'{}分'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)},</span>
+                <span class="n">value</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">),</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'padding-left'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'60%'</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">P</span><span class="p">(</span><span class="s">'2.您觉得月报还有哪些地方需要改进？或者您在下一期月报中还想了解哪些内容？'</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'margin-top'</span><span class="p">:</span> <span class="mi">50</span><span class="p">}),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="n">dcc</span><span class="p">.</span><span class="n">Textarea</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'textarea_feedback'</span><span class="p">,</span>
+                <span class="n">placeholder</span><span class="o">=</span><span class="s">'不记名、不追踪、不打击报复，请畅所欲言~~~'</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'width'</span><span class="p">:</span> <span class="s">'100%'</span><span class="p">,</span> <span class="s">'height'</span><span class="p">:</span> <span class="mi">80</span><span class="p">}</span>
+            <span class="p">),</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'padding-left'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'60%'</span><span class="p">}</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="n">html</span><span class="p">.</span><span class="n">Button</span><span class="p">(</span><span class="s">'点击提交'</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s">'button_feedback'</span><span class="p">,</span> <span class="n">n_clicks</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'padding-left'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">'padding-top'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,},</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s">'div_feedback_success'</span><span class="p">,</span>
+            <span class="n">children</span><span class="o">=</span><span class="n">html</span><span class="p">.</span><span class="n">P</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="s">'p_feedback_success'</span><span class="p">,</span>
+                <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'color'</span><span class="p">:</span> <span class="s">'red'</span><span class="p">,</span> <span class="s">'font-size'</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s">'padding-left'</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">'padding-top'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,},</span>
+            <span class="p">),</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{},</span>
+        <span class="p">),</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s">'div_feedback_data'</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span> <span class="n">className</span><span class="o">=</span><span class="s">'div_feedback'</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="c1"># 点击按钮返回提交成功
+</span><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'p_feedback_success'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'button_feedback'</span><span class="p">,</span> <span class="s">'n_clicks'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">feedback_success</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">):</span>
+    <span class="n">hint</span> <span class="o">=</span> <span class="s">'提交成功，谢谢！'</span>
+    <span class="k">if</span> <span class="n">n_clicks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hint</span>
+
+<span class="c1"># 点击提交按钮保存数据
+</span><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'div_feedback_data'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'button_feedback'</span><span class="p">,</span> <span class="s">'n_clicks'</span><span class="p">)],</span>
+              <span class="p">[</span><span class="n">State</span><span class="p">(</span><span class="s">'slider_feedback'</span><span class="p">,</span> <span class="s">'value'</span><span class="p">),</span> <span class="n">State</span><span class="p">(</span><span class="s">'textarea_feedback'</span><span class="p">,</span> <span class="s">'value'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">feedback_success</span><span class="p">(</span><span class="n">n_clicks</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s">'/Users/liang/Documents/Python/99Pyproject/channelDailyData'</span>
+    <span class="k">if</span> <span class="n">n_clicks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">'feedback.txt'</span><span class="p">),</span> <span class="s">'a'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'gbk'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">'"{}", "{}", "{}", "{}" </span><span class="se">\n</span><span class="s">'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">n_clicks</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">text</span><span class="p">.</span><span class="n">strip</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">)))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'有人在{}提交了第{}条反馈意见，请快查看！ '</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">n_clicks</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s">'8050'</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+:ET

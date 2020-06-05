@@ -17,7 +17,6 @@
     <meta property="og:description" content="
   本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。
 
-
 ">
     
     <meta property="article:published_time" content="2018-12-12T20:00:00Z">
@@ -121,6 +120,8 @@
                     <li>
                         <a href="/portfolio/">Portfolio</a>
                     </li>
+                    
+                    
                     
                     
                     
@@ -257,7 +258,7 @@
                 
 
 				<blockquote>
-  <p>本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是<code class="highlighter-rouge">jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器</code>来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。</p>
+  <p>本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是<code class="language-plaintext highlighter-rouge">jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器</code>来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。</p>
 </blockquote>
 
 <!-- 基本的部署流程可以概括为：
@@ -285,9 +286,9 @@
 
 <h3 id="2-购买域名">2. 购买域名</h3>
 
-<p>在阿里云官网顶部搜索栏中搜索<code class="highlighter-rouge">域名购买</code>，然后进入域名购买页面，搜索自己喜欢的域名，各种域名因有尽有：<code class="highlighter-rouge">.com</code>, <code class="highlighter-rouge">.cn</code>, <code class="highlighter-rouge">.org</code>, <code class="highlighter-rouge">.me</code>, <code class="highlighter-rouge">.info</code>等等，琳琅满目，像我就是买的<code class="highlighter-rouge">liangfan.tech</code>。</p>
+<p>在阿里云官网顶部搜索栏中搜索<code class="language-plaintext highlighter-rouge">域名购买</code>，然后进入域名购买页面，搜索自己喜欢的域名，各种域名因有尽有：<code class="language-plaintext highlighter-rouge">.com</code>, <code class="language-plaintext highlighter-rouge">.cn</code>, <code class="language-plaintext highlighter-rouge">.org</code>, <code class="language-plaintext highlighter-rouge">.me</code>, <code class="language-plaintext highlighter-rouge">.info</code>等等，琳琅满目，像我就是买的<code class="language-plaintext highlighter-rouge">liangfan.tech</code>。</p>
 
-<p>一般而言， <code class="highlighter-rouge">.com</code>的域名会比其他的贵一些。这个可以自己根据经济情况和喜好拿捏。</p>
+<p>一般而言， <code class="language-plaintext highlighter-rouge">.com</code>的域名会比其他的贵一些。这个可以自己根据经济情况和喜好拿捏。</p>
 
 <p>域名的话建议3年起买，我是购买的3年。因为域名到期后再续费，价格是肯定比初次购买要贵的，所以如果经济条件允许，最好是多买几年。</p>
 
@@ -304,7 +305,7 @@
 
 <p>当然你也可以申请国外的服务器，然后将博客部署在国外网站上面，是不用备案的，但是访问速度就不敢保证了，而且会不会被wall也难说。</p>
 
-<p>域名备案，在阿里云首页搜索<code class="highlighter-rouge">域名备案</code>进入相应页面即可开始操作了。</p>
+<p>域名备案，在阿里云首页搜索<code class="language-plaintext highlighter-rouge">域名备案</code>进入相应页面即可开始操作了。</p>
 
 <p>域名备案需要用到身份证信息、前面申请的服务器的公网IP、填写备案材料、申请幕布并拍照邮寄材料等等一系列流程，总之比较繁杂，这部分需要在阿里云的指引下一步步完成。</p>
 
@@ -315,17 +316,17 @@
 
 <h3 id="4-域名解析">4. 域名解析</h3>
 
-<p>所谓域名解析，就是说将你的文字域名（如<code class="highlighter-rouge">liangfan.tech</code>）映射到数据域名（如117.41.12.13）上。</p>
+<p>所谓域名解析，就是说将你的文字域名（如<code class="language-plaintext highlighter-rouge">liangfan.tech</code>）映射到数据域名（如117.41.12.13）上。</p>
 
 <p>登录阿里云官网后，进入控制台-域名点击进入就可以看见自己名下的域名列表，点击解析域名后添加记录。</p>
 
-<p>这里添加两个解析记录即可，两个记录的的<code class="highlighter-rouge">记录类型</code>均是A，主机记录一个是<code class="highlighter-rouge">www</code>一个是<code class="highlighter-rouge">@</code>，解析线路都选择<code class="highlighter-rouge">默认</code>，记录值均是自己的公网IP，TTL10分钟。</p>
+<p>这里添加两个解析记录即可，两个记录的的<code class="language-plaintext highlighter-rouge">记录类型</code>均是A，主机记录一个是<code class="language-plaintext highlighter-rouge">www</code>一个是<code class="language-plaintext highlighter-rouge">@</code>，解析线路都选择<code class="language-plaintext highlighter-rouge">默认</code>，记录值均是自己的公网IP，TTL10分钟。</p>
 
-<p>这两个解析记录的含义是说，将域名<code class="highlighter-rouge">xxxx.xx</code>和<code class="highlighter-rouge">www.xxxx.xx</code>均解析到公网IP上，这样在浏览器输入网址的时候加wwww或者不加均可访问网站。</p>
+<p>这两个解析记录的含义是说，将域名<code class="language-plaintext highlighter-rouge">xxxx.xx</code>和<code class="language-plaintext highlighter-rouge">www.xxxx.xx</code>均解析到公网IP上，这样在浏览器输入网址的时候加wwww或者不加均可访问网站。</p>
 
-<p>由于阿里云ESC弹性服务器已经对网络访问进行了优化，因此是不需要进行<code class="highlighter-rouge">cname</code>解析的，不要被网上的杂论带歪了。</p>
+<p>由于阿里云ESC弹性服务器已经对网络访问进行了优化，因此是不需要进行<code class="language-plaintext highlighter-rouge">cname</code>解析的，不要被网上的杂论带歪了。</p>
 
-<p>这个时候域名相关的工作基本就完结了。可以在本地的电脑的<code class="highlighter-rouge">Terminal</code>中分别<code class="highlighter-rouge">ping</code>一下公网数字IP和自己的文字域名看下通不通，如果不停出现类似<code class="highlighter-rouge">64 bytes from xx.xx.xxx.xxx: icmp_seq=0 ttl=52 time=7.879 ms</code>的内容，那么说明域名解析成功，可以进行下一步了。</p>
+<p>这个时候域名相关的工作基本就完结了。可以在本地的电脑的<code class="language-plaintext highlighter-rouge">Terminal</code>中分别<code class="language-plaintext highlighter-rouge">ping</code>一下公网数字IP和自己的文字域名看下通不通，如果不停出现类似<code class="language-plaintext highlighter-rouge">64 bytes from xx.xx.xxx.xxx: icmp_seq=0 ttl=52 time=7.879 ms</code>的内容，那么说明域名解析成功，可以进行下一步了。</p>
 
 <blockquote>
   <p>待续~~~</p>
@@ -382,6 +383,12 @@ Enjoy your personal website and keep writing！ -->
                 <hr style="visibility: hidden;">
 
                 
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
 
                 
             </div>  
@@ -411,95 +418,50 @@ Enjoy your personal website and keep writing！ -->
         </a>
         
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=Slides"
-                    title="Slides"
-                    rel="1">Slides</a>
-        
-                <a data-sort="0007" 
+                <a data-sort="0014" 
                     href="/archive/?tag=Python"
                     title="Python"
                     rel="11">Python</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
                     title="数据可视化"
                     rel="10">数据可视化</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=Dash"
                     title="Dash"
                     rel="10">Dash</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
                     href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
                     title="个人网站"
-                    rel="4">个人网站</a>
+                    rel="6">个人网站</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
                     href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
                     title="阿里云服务器"
-                    rel="4">阿里云服务器</a>
+                    rel="5">阿里云服务器</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0021" 
                     href="/archive/?tag=Tomcat"
                     title="Tomcat"
                     rel="4">Tomcat</a>
         
-                <a data-sort="0014" 
-                    href="/archive/?tag=jekyll"
-                    title="jekyll"
-                    rel="4">jekyll</a>
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
-                    title="学习"
-                    rel="1">学习</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C"
-                    title="工作"
-                    rel="1">工作</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4"
-                    title="工作思维"
-                    rel="1">工作思维</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BC%80%E7%AF%87%E8%AF%AD"
-                    title="开篇语"
-                    rel="1">开篇语</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BD%92%E7%BA%B3"
-                    title="归纳"
-                    rel="1">归纳</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6"
-                    title="数据科学"
-                    rel="1">数据科学</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%BC%94%E7%BB%8E"
-                    title="演绎"
-                    rel="1">演绎</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
-                    title="生活"
-                    rel="1">生活</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=JavaScript"
-                    title="JavaScript"
-                    rel="1">JavaScript</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=Web"
-                    title="Web"
-                    rel="1">Web
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
     </div>
 </section>
 
@@ -512,8 +474,6 @@ Enjoy your personal website and keep writing！ -->
   
   <li><a href="http://mida.re/">乱序</a></li>
   
-  <li><a href="http://qianduan.guru/">前端外刊评论</a></li>
-  
   <li><a href="http://lingyu.wang/">天镶的博客</a></li>
   
   <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
@@ -521,14 +481,6 @@ Enjoy your personal website and keep writing！ -->
   <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
   
   <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
-  
-  <li><a href="https://www.ruoyaowu.com/">David's Game</a></li>
-  
-  <li><a href="http://dhong.co">DHong Say</a></li>
-  
-  <li><a href="http://ingf.github.io/">尹峰以为</a></li>
-  
-  <li><a href="http://xieminis.me/">解旻的博客</a></li>
   
 </ul>
 
@@ -543,6 +495,21 @@ Enjoy your personal website and keep writing！ -->
 
 
 
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/12/从零开始部署个人网站上线之1";
+    var disqus_url = "http://localhost:4000/2018/12/12/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B1/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
 
 
 
@@ -589,7 +556,7 @@ Enjoy your personal website and keep writing！ -->
 </ul>
 
                 <p class="copyright text-muted">
-                    Copyright &copy; LiangFan's Blog 2018
+                    Copyright &copy; LiangFan's Blog 2020
                     <br>
                     Powered by <a href="http://huangxuan.me">Hux Blog</a> |
                     <iframe

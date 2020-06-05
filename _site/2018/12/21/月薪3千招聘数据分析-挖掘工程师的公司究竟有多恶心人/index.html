@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="月薪3千招聘数据分析/挖掘工程师的公司究竟有多恶心人 - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="我觉得数据分析/数据挖掘工作是这个世界上难度最大的工作之一。但是它的价值和作用都远远被低估了。虽然我已经不做分析师很多年了，但仍然想聊几句公道话。
+">
+    
+    <meta property="article:published_time" content="2018-12-21T19:00:00Z">
+    
+    
+    <meta property="article:author" content="LiangFan">
+    
+    
+    <meta property="article:tag" content="数据分析">
+    
+    <meta property="article:tag" content="职业自豪感">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/2018/12/21/%E6%9C%88%E8%96%AA3%E5%8D%83%E6%8B%9B%E8%81%98%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-%E6%8C%96%E6%8E%98%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%85%AC%E5%8F%B8%E7%A9%B6%E7%AB%9F%E6%9C%89%E5%A4%9A%E6%81%B6%E5%BF%83%E4%BA%BA/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>月薪3千招聘数据分析/挖掘工程师的公司究竟有多恶心人 - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2018/12/21/%E6%9C%88%E8%96%AA3%E5%8D%83%E6%8B%9B%E8%81%98%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-%E6%8C%96%E6%8E%98%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%85%AC%E5%8F%B8%E7%A9%B6%E7%AB%9F%E6%9C%89%E5%A4%9A%E6%81%B6%E5%BF%83%E4%BA%BA/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/my-post/07.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/my-post/07.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90" title="数据分析">数据分析</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E8%81%8C%E4%B8%9A%E8%87%AA%E8%B1%AA%E6%84%9F" title="职业自豪感">职业自豪感</a>
+                        
+                    </div>
+                    <h1>月薪3千招聘数据分析/挖掘工程师的公司究竟有多恶心人</h1>
+                    
+                    <h2 class="subheading">————不要让别人毁了你的职业自豪感</h2>
+                    <span class="meta">Posted by LiangFan on December 21, 2018</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<p>我觉得数据分析/数据挖掘工作是这个世界上难度最大的工作之一。但是它的价值和作用都远远被低估了。虽然我已经不做分析师很多年了，但仍然想聊几句公道话。</p>
+
+<p>一直有个习惯，不管离职在职都会时不时上招聘网站看看。一来了解市场上需要怎么样的人才，自己的能力距离自己想要的职位/薪水还有多远的距离，明确努力的方向；二来了解下市场行情，更精准的定位自己。</p>
+
+<p>今天写这个文章，纯粹是一个偶然。顺手搜了下，竟然真的有3000块钱一个月的正式岗的工作：</p>
+
+<p><img src="/img/my-post/20181221a.png" alt="Alt text" /></p>
+
+<p>3000块钱的数据分析师正式岗……我的个心啊，我不知道别的数据分析师看到后是什么心情，反正我就是愤懑久难平抑。</p>
+
+<p>可以毫不夸张的说，数据分析/数据挖掘应该是所有技术岗位里面最难的工作，也应该是薪水最高的工作。可惜的是，很多公司没有数仓，没有数据开放平台，所以他们招的数据分析师都是取数师，并不是数据分析师。</p>
+
+<p>一路从战略分析师、用户体验分析师、数据分析师走过来，真的觉得国内对于分析类工作太轻视了，从给的薪水就能从侧面反映出来。但是我个人觉得，分析/挖掘类工作真的是很有意思，也很重要很有前途。</p>
+
+<h3 id="1-数据分析师驱动业务帮助业务">1. 数据分析师驱动业务、帮助业务</h3>
+<p>业务是任何一家公司的灵魂，数据分析师是最接近公司经营状况的。每天跟核心业务数据打交道，监测公司的经营状况，驱动业务优化。分析师是辅助管理层做重大决策的依据，怎可轻视？</p>
+
+<h3 id="2-从行业大势来看数据分析必然越来越被需求">2. 从行业大势来看，数据分析必然越来越被需求</h3>
+<p>互联网一直以来都是过分关注数据收集、存储和计算，现在大数据也是人人必谈。但是真正有多少公司进行了数据的合理利用，产生了价值？</p>
+
+<p>现在可以说数据存储和计算能力完全能满足大中小型公司的需求了，未来将是各公司管理层向数据要价值、要应用的二十年，没有挖掘和分析，数据放在那就是废料还占空间。</p>
+
+<h3 id="3-数据分析师是承上启下的人">3. 数据分析师是承上启下的人</h3>
+<p>上承ETL工程师或者数据开发。但是有个很突出的问题，大部分做数据开发的工程师，简直可以说是盲目啊，你们不去主动了解业务就做数据仓库你确定不是搞笑的？你们的商业敏感性呢？数据分析师必须对上下游充分把控，不然自己想做的数据应用就泡汤了。很多做数据开发的可能都没我6，作为经常处理数据并应用的人，其实对于ETL这一套可以说是烂熟于心，对于业务也是心里有杆秤。什么热数据冷数据，平时大家都关心些啥不可能提前没点逼数的。</p>
+
+<p>下启产品/运营/设计等。得给他们解释怎么做的，为甚么这么做，为什么做不了，有啥技术难点，等等……</p>
+
+<p>可以这么理解，数据分析师是数据技术和业务的中间桥梁，对上要告诉数据开发业务逻辑，对下要给需求方解释技术限制/手段等等~~~</p>
+
+<h3 id="4-数据分析师必须精通各种技术">4. 数据分析师必须精通各种技术</h3>
+<ul>
+  <li>你得会爬虫</li>
+  <li>你得会一些数据架构</li>
+  <li>你得会数据可视化和一些前端知识（可视化框架）</li>
+  <li>你得能跟前端跟客户端说得上话（数据采集、打点等等）</li>
+  <li>你得会NLP</li>
+  <li>你得会机器学习</li>
+  <li>你得会产品、懂点设计和用户体验、懂点运营用户增长啥的</li>
+  <li>你得有沟通技巧</li>
+</ul>
+
+<p>话说，把上面的都搞通透真的以为不伤脑子的嘛？又要懂业务又要懂技术，真的以为门槛很低的嘛？不仅要处理分析数据，还得把报告写得漂漂亮亮的让大老爷们看的赏心悦目，真的不需要花心思吗？3000块钱TM的吃饭都不够啊能干啥啊。</p>
+
+<p>君子爱财，取之有道。廉者不受嗟来之食，居于陋室惟吾德馨。</p>
+
+<p>即使哪天露宿街头，也要有珍视自己的勇气。没有自重，何来自尊。</p>
+
+<p>资本家作践自己，所以你自己就真的把自己当廉价劳动力给卖了，你的心不痛吗？</p>
+
+<p>还有那些花3千块钱一个月就想招数据分析师的公司，你们在恶心谁呢？每一个稍微有点责任心的同行，都应该站出来高声疾呼，拒绝和抨击这种垃圾企业的人才观。只有我们好了，这个行业才会好，只有行业好了，我们才会好。</p>
+
+<p>我们必须认识到一个问题，低薪必然让行业变得越来越low b，各种鱼龙混杂的人群。而鱼龙混杂又会进一步毁坏行业口碑。如果真爱这一行业，应该是痛心疾首的。我们要严格要求自己，努力让自己变得优秀，也要对那些玷污我们职业自豪感的公司say no.</p>
+
+<p style="color: red;font-weight: bold;">一个3000块钱月薪的职业，你觉得你会干得很自豪觉得自己很有价值吗？</p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/20/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B1-%E5%88%9D%E8%AF%86ClickHouse/" data-toggle="tooltip" data-placement="top" title="深入理解ClickHouse之1 - 初识ClickHouse">
+                        Previous<br>
+                        <span>深入理解ClickHouse之1 - 初识ClickHouse</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/12/24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B2-%E9%83%A8%E7%BD%B2%E5%8D%95%E6%9C%BA%E7%89%88ClickHouse/" data-toggle="tooltip" data-placement="top" title="深入理解ClickHouse之2-部署单机版ClickHouse">
+                        Next<br>
+                        <span>深入理解ClickHouse之2-部署单机版ClickHouse</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="6">个人网站</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="5">阿里云服务器</a>
+        
+                <a data-sort="0021" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/21/月薪3千招聘数据分析:挖掘工程师的公司究竟有多恶心人";
+    var disqus_url = "http://localhost:4000/2018/12/21/%E6%9C%88%E8%96%AA3%E5%8D%83%E6%8B%9B%E8%81%98%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-%E6%8C%96%E6%8E%98%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%85%AC%E5%8F%B8%E7%A9%B6%E7%AB%9F%E6%9C%89%E5%A4%9A%E6%81%B6%E5%BF%83%E4%BA%BA/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

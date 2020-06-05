@@ -1,0 +1,355 @@
+I"�E<!-- 
+> 本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是`jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器`来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。
+
+
+<!-- 基本的部署流程可以概括为：
+
+![Alt text](/img/my-post/20181210a.png) -->
+
+<!-- 
+### 1. 购买阿里云ESC服务器
+
+这个比较简单，就是百度搜阿里云然后打开官网首页，产品-云服务ESC点击进去，然后注册登录。
+
+由于是个人网站，访问量和并发非常小，也不需要用到数据库，买个1核心1GB内存1M带宽的就是了，当然如果金钱充裕，那么买个带宽大点的也不是不行。
+
+服务器的地址选国内比较好，因为毕竟大部分访问的用户都是在国内的。
+
+服务器操作系统选择ubuntu16.04或以上，切记服务器选择linux ubuntu，别问为什么，反正就是windows服务器被嫌弃。像superset和ClickHouse压根就不支持windows，只能用在mac和linux上（二者都是基于unix）。
+
+另外，阿里云的服务器首次购买是可以享受N天无理由退款的，具体多少天可以搜一搜，如果想退货再重新购买需要趁早。遇到双11双12，服务器的价格折扣很大，还是挺实惠的。学生凭学生证购买也可以享受折扣。
+
+到这里的话第1步就OK了。操作系统的基本环境配置，等做完了第3步再回来弄。为什么呢？往下面看就知道了。
+
+
+
+### 2. 购买域名
+
+在阿里云官网顶部搜索栏中搜索`域名购买`，然后进入域名购买页面，搜索自己喜欢的域名，各种域名因有尽有：`.com`, `.cn`, `.org`, `.me`, `.info`等等，琳琅满目，像我就是买的`liangfan.tech`。
+
+一般而言， `.com`的域名会比其他的贵一些。这个可以自己根据经济情况和喜好拿捏。
+
+域名的话建议3年起买，我是购买的3年。因为域名到期后再续费，价格是肯定比初次购买要贵的，所以如果经济条件允许，最好是多买几年。
+
+另外，建议服务器和域名都在阿里云购买，一来阿里云服务稳定，价格还算公道；二来后面备案等也较为方便。
+
+
+
+### 3. 域名备案
+
+这应该是所有步骤里面最耗时的一步了，所以先把这一步给处理了，其实中间是有很多时间是把弄其它的东西的。
+
+啥是域名备案呢？其实就是到z+f那里去注册下、实名下。具体原因嘛，你懂的， 大天朝，毕竟没有west world那么free。工信部规定，没有备案的域名，是打不开网站的，而且还会受到法律的制裁。
+
+当然你也可以申请国外的服务器，然后将博客部署在国外网站上面，是不用备案的，但是访问速度就不敢保证了，而且会不会被wall也难说。
+
+域名备案，在阿里云首页搜索`域名备案`进入相应页面即可开始操作了。
+
+域名备案需要用到身份证信息、前面申请的服务器的公网IP、填写备案材料、申请幕布并拍照邮寄材料等等一系列流程，总之比较繁杂，这部分需要在阿里云的指引下一步步完成。
+
+从申请备案到通过大概需要3-4周的时间。这段时间可以跳过第4步，进行5-10的步骤，先在本地部署和演练。
+
+
+
+### 4. 域名解析
+
+所谓域名解析，就是说将你的文字域名（如`liangfan.tech`）映射到数据域名（如117.41.12.13）上。
+
+登录阿里云官网后，进入控制台-域名点击进入就可以看见自己名下的域名列表，点击解析域名后添加记录。
+
+这里添加两个解析记录即可，两个记录的的`记录类型`均是A，主机记录一个是`www`一个是`@`，解析线路都选择`默认`，记录值均是自己的公网IP，TTL10分钟。
+
+这两个解析记录的含义是说，将域名`xxxx.xx`和`www.xxxx.xx`均解析到公网IP上，这样在浏览器输入网址的时候加wwww或者不加均可访问网站。
+
+由于阿里云ESC弹性服务器已经对网络访问进行了优化，因此是不需要进行`cname`解析的，不要被网上的杂论带歪了。
+
+这个时候域名相关的工作基本就完结了。可以在本地的电脑的`Terminal`中分别`ping`一下公网数字IP和自己的文字域名看下通不通，如果不停出现类似`64 bytes from xx.xx.xxx.xxx: icmp_seq=0 ttl=52 time=7.879 ms`的内容，那么说明域名解析成功，可以进行下一步了。 -->
+
+<!-- 
+### 5. 在本地电脑和服务器间传输数据/文件
+
+&nbsp;
+
+> 关于在服务器和本地之间传输数据或文件，网上资料很多，比如借助第三方软件等。这里介绍的方法不使用软件，而是直接使用`ssh`来实现连接和传输。
+如果需要将文件传输到指定文件夹下，可以先用命令`ssh root@your_public_ip_address`并输入密码来远程登录服务器，并使用`mkdir dirB`来创建目标文件夹。
+
+
+
+##### 5.1 使用`scp`来传输单个文件（本地上传到服务器）
+
+- 语法为`scp fileA dirB`也就是`scp 来源地 目的地`的模式，将文件传输至服务器目录下，例如：`scp /Volumes/your_local_file.txt root@your_public_ip_address:/var/mydata/`
+
+
+
+##### 5.2 使用`rsync -P --rsh=ssh` 上传文件且支持断点续传，`ctrl+z`暂停，`bg`恢复
+
+- 例如：`rsync -P --rsh=ssh /Volumes/data/bank_train.csv root@your_public_ip_address:/var/mydata/`
+
+
+
+##### 5.3 使用`scp -r`来传输文件夹（本地上传到服务器）
+
+- 语法为`scp -r dirA dirB`，将文件夹传输至服务器目录下，例如：`scp -r /Volumes/your_local_dir root@your_public_ip_address:/var/mydata/`
+
+
+
+##### 5.4 使用`rsync -a`来同步文件夹
+
+- 例如：`rsync -a /Users/Documents/my-blog/_site/  root@your_public_ip_address:/tomcat/webapps/ROOT`，此种方法不会传输文件夹下所有的文件，而是会去比对两个文件夹下的文件异同，只会将前者下面有的文件而后者没有的进行同步，如果是那种需要经常更新的文件夹，使用此种方法的话传输的数据量会大大减小（不必要每次都全文件夹传输）。
+
+- 另外注意`_site`后面的`/`号，如果有说明是同步目录底下的各个文件过去（目标文件夹文件结构会成为`/ROOT/*files`），如果没有那么会直接传输整体文件夹（目标文件夹文件结构会成为`/ROOT/_site/*files`）
+
+
+
+##### 5.5 使用`rm`命令来删除文件/文件夹
+
+- 使用`rm file`来删除单个文件，使用`rm -r dir`来删除整个文件夹，使用`rm -rf dir`来无视任何条件的直接删除文件夹（不会有反馈和警告，直接删除）
+
+
+
+
+具体是从服务器传输到本地，还是从本地传输到服务器，自己调整来源地和目的地的顺序即可。
+
+> 待续~~~
+
+&nbsp;
+&nbsp;
+ -->
+<!-- 
+
+### 6. 配置jdk
+
+首先需要安装的是oracle版本的jdk（`Java Development Kit`），不是jre（jre是java程序的运行环境，不是编译和开发环境），也不是open jdk。
+
+配置jdk需执行如下几步操作：
+
+1）从[oracle官网下载jdk8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)，注意下载对应的版本（操作系统、32位/64位）；以ubuntu64位为例，下载linux x64以`tar.gz`为结尾的文件即可
+
+2）将文件上传至远程服务器预先建立好的文件夹并解压
+```
+# 服务器端
+mkdir /java
+
+# 本地
+scp /Users/liang/Downloads/jdk-8u191-linux-x64.tar.gz root@your_public_ip:/java
+
+# 解压文件
+cd /java
+tar -zxvf jdk-8u191-linux-x64.tar.gz
+ls -l /java/jdk1.8.0_191
+```
+
+3）设置java_home环境<br>
+先打开配置文件，`sudo vi /etc/profile` <br>
+然后将下面的代码复制进profile文件
+```
+#set Java environment
+export JAVA_HOME=/java/jdk1.8.0_191
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+```
+`vi文件编辑tips: 按i键进入编辑模式 -> 上下位移到空白位置 -> paste粘贴内容 -> esc退出编辑 -> :wq保存退出`
+
+
+4）使环境配置生效，并查看配置结果
+```
+source /etc/profile
+java -version
+```
+ 
+
+&nbsp;
+&nbsp;
+
+### 7. 在本地配置jekyll
+
+> jekyll是一个静态网页生成工具，可以理解为对网页代码/资源进行有效组织和编译。所谓静态，就是说没有数据交互，页面状态和内容是写死的。
+
+jekyll配置在服务端或者本地都是ok的，但是由于我们采取的方式是先将博客文件在本地编辑、编译，测试、浏览、修改确认没问题后再上传到服务器端，所以在本地配置jekyll就ok了。下面简单介绍下mac或者ubuntu如何配置jekyll，更详细的配置步骤可以去[jekyll官网](https://jekyllrb.com/)自行查看。
+
+ubuntu配置jekyll有如下几个步骤：
+
+1）安装ruby及配置环境
+```
+sudo apt-get install ruby-full build-essential zlib1g-dev
+
+echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
+echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
+echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+2）安装jekyll和paginate
+```
+gem install jekyll bundler 
+gem install jekyll-paginate
+```
+
+3）测试是否安装成功
+```
+jekyll -version
+```
+
+&nbsp;
+&nbsp;
+
+### 8. 使用Hux Blog Theme
+
+> 上面已经安装了静态博客生成工具，那么接下来就是要配置博客内容工具或者主题了。所谓主题，一是方便博客的书写和格式化内容，二是使博客看起来美观。
+
+这里使用的是一个阿里前端小哥的开源博客主题，叫 [Hux Blog Theme](https://github.com/huxpro/huxpro.github.io/)，它是在jekyll的基础上开发的一个很美观的博客主题。直接下载下来并配合之前安装的jekyll即可在本地使用了。
+
+将Hux的github源码下载到本地某个文件夹下，然后执行如下代码：
+```
+cd /huxblog-boilerplate
+jekyll serve
+```
+如果出现类似以下内容，那么大功告成：
+```
+Configuration file: /Volumes/SCALA/html/my-blog/_config.yml
+            Source: /Volumes/SCALA/html/my-blog
+       Destination: /Volumes/SCALA/html/my-blog/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating... 
+                    done in 1.157 seconds.
+ Auto-regeneration: enabled for '/Volumes/SCALA/html/my-blog'
+    Server address: http://127.0.0.1:4000/
+  Server running... press ctrl-c to stop.
+```
+
+此时，在浏览器中输入`http://127.0.0.1:4000/`是可以看见渲染后的博客内容的。
+
+关于`Hux Blog Theme`注意如下几个问题：
+- `_config.yml`是配置文件
+- 博文编辑`_posts`文件夹下的`markdown`文件即可，文件命名格式为`yyyy-mm-dd-fileName.markdown`文件名及路径会显示在浏览器的URL中；博文标题和格式是由markdown文件的顶部内容控制的；博文顶部背景图片以深色系为佳（因为标题字是白色的）
+- 编译后的内容存放在`_site`文件夹下，这个后面需要用到
+- 后续博文编辑修改均可先在本地查看确认后再上传至服务器端
+- `jekyll serve`开启服务，`jekyll build`编译（其实开启服务的过程也是包含编译的，只需要编译可以使用jekyll build）
+
+&nbsp;
+> 待续~~~ -->
+
+<!-- <ul type="circle">
+	<li>_config.yml是配置文件</li>
+</ul> -->
+
+<!-- &nbsp;
+&nbsp; -->
+
+<h3 id="9-配置tomcat">9. 配置Tomcat</h3>
+
+<blockquote>
+  <p>Apache Tomcat是一个轻量级的web应用服务器代理， 在中小型系统和并发访问用户不是很多的场合下被普遍使用。一般来说Apache家族的开源软件都是又笨重又复杂的，但是稳定性和功能都比较健壮。关于Tomcat的详细特点和应用细节，可以去官网了解。这里我们只需要用到它很小的一部分功能，所以即使不了解也不必胆怯。</p>
+</blockquote>
+
+<p>在服务器端配置Tomcat有如下几个步骤：</p>
+
+<p>1）<a href="https://tomcat.apache.org/download-90.cgi">下载Tomcat 9 Core</a>并上传至服务器端</p>
+
+<p>2）解压文件<br />
+<code class="language-plaintext highlighter-rouge">tar -zxvf apache-tomcat-9.0.13.tar.gz ./location_you_want</code></p>
+
+<p>3）后台守护方式启动Tomcat</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>cd /Users/Downloads/apache-tomcat-9.0.13/bin
+ls -l
+./startup.sh
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>此时Tomcat应该就已经在后台运行了，如果看见类似如下代码那么说明成功：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>Using CATALINA_BASE:   /Users/liang/Downloads/apache-tomcat-9.0.13
+Using CATALINA_HOME:   /Users/liang/Downloads/apache-tomcat-9.0.13
+Using CATALINA_TMPDIR: /Users/liang/Downloads/apache-tomcat-9.0.13/temp
+Using JRE_HOME:        /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+Using CLASSPATH:       /Users/liang/Downloads/apache-tomcat-9.0.13/bin/bootstrap.jar:/Users/liang/Downloads/apache-tomcat-9.0.13/bin/tomcat-juli.jar
+Tomcat started.
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>此时在浏览器中打开<code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/</code>，就能刚看见官方自带的web app例子了。
+关闭服务的话使用<code class="language-plaintext highlighter-rouge">./shutdown.sh</code>命令即可。运行日志存放在logs文件夹中。</p>
+
+<p>4）修改Tomcat服务请求端口<br />
+打开conf文件夹下的<code class="language-plaintext highlighter-rouge">server.xml</code>文件，找到如下这段代码：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>    &lt;Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" /&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>将port从8080修改为80.这样的话在浏览器中输入网址不再需要带上端口了，输入<code class="language-plaintext highlighter-rouge">http://127.0.0.1/</code>也可访问了。</p>
+
+<p>更详细的Apache Tomcat 9功能，请参考<a href="http://tomcat.apache.org/tomcat-9.0-doc/index.html">官方文档</a>。</p>
+
+<p> 
+ </p>
+
+<h3 id="10-将编译后的博客文件同步至服务器端">10. 将编译后的博客文件同步至服务器端</h3>
+
+<blockquote>
+  <p>现在，所有的前期配置工作都已经完成了。接下来只需要将博客内容提供给Tomcat，由Tomcat代理服务请求及响应即可了。 根据jekyll官方的提示，只需要将博客编译后的内容拷贝到服务器的ROOT目录下即可。</p>
+</blockquote>
+
+<p>jekyll官方在以下文字中作了一些提点，我也是一点点摸索才恍然大悟：
+<img src="/img/my-post/20181218.png" alt="Alt text" /></p>
+
+<p>接下来按照如下步骤给Tomcat服务器提供内容：</p>
+
+<p>1）清空Tomcat官方自带的web app例子文件</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>cd /apache-tomcat-9.0.13/webapps/ROOT
+sudo rm -rf ./
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>2）本地编辑博客内容并编译</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>cd /my-blog
+jekyll build
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>3）将<code class="language-plaintext highlighter-rouge">_site</code>文件夹下的内容上传到服务器中<code class="language-plaintext highlighter-rouge">/apache-tomcat-9.0.13/webapps/ROOT</code>文件夹下</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>rsync -a /my-blog/_site/  root@your_public_ip:/apache-tomcat-9.0.13/webapps/ROOT
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>4）启动Tomcat服务并访问网址</p>
+
+<p>不出意外的话，用浏览器访问公网IP和域名均是可以正常浏览博客内容的。
+以后每次更新博客内容，重复第2-3步并刷新网页即可，不需要重启Tomcat服务。</p>
+
+<p> 
+ </p>
+
+<h3 id="11-注意阿里云的端口访问限制">11. 注意阿里云的端口访问限制</h3>
+
+<p>默认情况下，阿里云服务器是没有开放任何端口访问权限的。因此如果网站打不开，需要看下是否是因为端口访问权限的问题。</p>
+
+<p>具体配置入口是：控制台 -&gt; 云服务器ESC -&gt; 网络和安全 -&gt; 安全组 -&gt; 配置规则</p>
+
+<p>开放入口方向中的tcp 80端口即可。</p>
+
+<p> </p>
+
+<p><code class="language-plaintext highlighter-rouge">Enjoy your personal website and keep writing！</code></p>
+
+<p> </p>
+
+<blockquote>
+  <p>完结~~~</p>
+</blockquote>
+
+<p> 
+ </p>
+
+:ET

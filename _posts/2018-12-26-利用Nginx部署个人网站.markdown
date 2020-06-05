@@ -1,0 +1,168 @@
+---
+layout:     post
+title:      "利用Nginx部署个人网站"
+subtitle:   "————集群、分布式、并行计算"
+date:       2018-12-26 12:00:00
+author:     "LiangFan"
+header-img: "img/my-post/07.jpg"
+tags: 
+    - jekyll 
+    - Nginx 
+    - 阿里云服务器 
+    - 个人网站
+---
+
+> 之前的文章中已将讲到过用Tomcat作为app代理来部署静态个人网站了，本文尝试用nginx方案再部署一次。
+
+虽然Tomcat和Nginx是不同的东西（前者是APP层面的服务器代理，后者是http-server协议层面的代理），但是二者均可以用来代理静态网页，而且均比较简单。由于nginx比较流行，本文尝试用nginx实现。
+
+#### 1. 安装nginx
+ubuntu下安装命令如下：
+```
+sudo apt-get install nginx
+apt-get update --fix-missing
+
+nginx -v
+// nginx version: nginx/1.10.3 (Ubuntu)
+
+nginx
+```
+
+根据上面的命令安装后，发现启动会报错，因此参考了一些网络资料。
+
+[一方面参考了这里。](https://blog.csdn.net/shmilychan/article/details/72773270)
+
+另一方面参考了下面的命令（我是通过这个安装成功的，按照后面的指引将之前的给卸载然后通过下面的命令安装）：
+
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:nginx/stable 
+sudo apt-get update
+sudo apt-get install nginx
+
+
+安装 sudo apt-get install nginx
+
+启动 sudo /etc/init.d/nginx start
+
+停止 sudo sudo /etc/init.d/nginx stop
+
+root配置 sudo vim /etc/nginx/sites-available/default  
+
+设置文件路径，修改这个字段的值 root /usr/share/nginx/www;
+
+设置日志，修改这个字段 access_log /var/log/nginx.log;
+
+关闭favicon.ico找不到的日志，修改这个：
+
+location = /favicon.ico {
+            log_not_found off;
+        }
+```
+
+mac下安装命令如下：
+
+```
+//先安装homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+//查询要安装的软件是否存在
+brew search nginx   
+
+//查看是否安装以及安装源等信息
+brew info nginx
+
+//开始安装，安装完后会显示配置文件、运行文件的安装路径等信息
+brew install nginx
+```
+
+观察可发现配置文件在 `/usr/local/etc/nginx/nginx.conf`路径。
+
+ 
+
+#### 2. 安装jekyll和Hux Blog Theme
+
+安装好jekyll和Hux Blog Theme后，就可以写博文了，然后编译，编译后的静态文件会在_site文件夹下。
+
+[具体可以参考这里，我以前写的文章。](http://liangfan.tech/2018/12/18/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99%E4%B8%8A%E7%BA%BF%E4%B9%8B3/)
+
+接着将`_site`文件夹上传到服务器。
+
+ 
+
+#### 3. 修改nginx配置
+将`nginx.conf`文件中的`root`修改为`_site`文件夹的路径。
+
+具体看下面：
+```
+listen       8080;
+server_name  localhost;
+
+charset utf-8;
+
+#access_log  logs/host.access.log  main;
+
+location / {
+    root   html;
+    index  index.html index.htm;
+}
+
+
+// 修改为：
+
+
+listen       80;
+server_name  你的局域网ip或者username;
+
+charset utf-8;
+
+#access_log  logs/host.access.log  main;
+
+location / {
+    root   /my-blog/_site;
+    index  index.html index.htm;
+}
+```
+
+使用nginx命令运行nginx，并打开自己的域名，博客就部署成功了。
+
+nginx启动停止命令：
+```
+nginx -s reload
+nginx -s stop
+```
+
+[删除或者卸载nginx参考这里：](https://blog.csdn.net/adley_app/article/details/79223221)
+```
+ps -A | grep nginx
+
+sudo service nginx stop
+
+sudo apt-get --purge remove nginx
+sudo apt-get autoremove
+dpkg --get-selections|grep nginx
+
+sudo apt-get --purge remove nginx-common
+sudo apt-get --purge remove nginx-core
+sudo apt-get --purge remove nginx
+dpkg --get-selections|grep nginx
+```
+
+如果运行的过程中莫名其妙报错：
+```
+执行 service nginx start或者restart命令出现错误
+
+service nginx restart
+Job for nginx.service failed because the control process exited with error code. See "systemctl status nginx.service" and "journalctl -xe" for details.
+莫名奇妙的出现了这个错误，查看logs也没什么发现，之后就停止了nginx的进程，再运行service nginx start，又可以了，具体出错原因现在还不清楚。
+
+查看nginx进程命令
+
+ps -A | grep  nginx
+
+pkill -9 nginx
+```   
+
+
+&nbsp;
+

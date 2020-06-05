@@ -1,0 +1,107 @@
+I"<blockquote>
+  <p>前面已经讲过了利用Tomcat和阿里云ESC服务器来搭建个人博客网站，这个技术方案的主要优点是访问速度快，而且不用托管代码(私密性)。现在介绍另外一种部署方案——利用Github Pages。</p>
+</blockquote>
+
+<p>利用Github Pages来部署个人网站的优点是代码在线上，随时可以操作，而且不用申请国内的服务器和域名，所以流程就相对简单一些，今天部署今天就能看见自己的网站并访问。</p>
+
+<p>缺点嘛，一来访问速度可能会很慢特别是需要加载图片的时候，然后也会有被wall的风险，毕竟github是国外网站；二来域名会比较长不那么个性；三来需要学会操作git…当然，一和二可以通过购买域名并进行cname域名绑定和网络加速来优化，三的话本身也不是一个难题。</p>
+
+<p>下面看一下简要的部署流程。</p>
+
+<h3 id="1注册一个github账号">1.注册一个github账号</h3>
+<p>这个没啥需要讲的了，就自己百度搜下github，进入官网按照流程注册一个自己的账号。</p>
+
+<h3 id="2了解并熟悉操作git">2.了解并熟悉操作git</h3>
+<p>如果是首次接触可能有点难以理解，但是git说白了就是：远程线上的代码（远程仓），本地也有代码（本地仓），怎么进行本地和远程的同步以及版本管理等等。git遵循success or nothing的事务性操作命令（是不是想到了数据库，orz……），来保证ACID——原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability）原则。</p>
+
+<p><a href="https://blog.csdn.net/qq_38716242/article/details/79380825">关于git的环境配置和操作，可以看这里。</a></p>
+
+<h3 id="3简单了解下github-pages">3.简单了解下Github Pages</h3>
+<p><a href="https://pages.github.com/">官网入口在这里。</a></p>
+
+<h3 id="4在github上建立一个namegithubio的repo">4.在github上建立一个name.github.io的repo</h3>
+
+<p>例如（由于我已经建立过，所以会有红色警示）：
+<img src="/img/my-post/20181219a.png" alt="Alt text" /></p>
+
+<h3 id="5将博客代码推到namegithubio这个repo">5.将博客代码推到name.github.io这个repo</h3>
+<p>这里需要注意的是，代码都是公开的，github非付费账号的repo代码都是公开的，如果有隐私信息请注意慎重。</p>
+
+<ul>
+  <li>
+    <p>首先，将<a href="https://github.com/huxpro/huxpro.github.io/">Hux Blog Theme</a>的代码clone到本地。</p>
+  </li>
+  <li>
+    <p>然后，将本地代码初始化后push到<code class="language-plaintext highlighter-rouge">name.github.io</code>这个repo。</p>
+  </li>
+</ul>
+
+<p>little tips:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre>1）新建Text文件夹作为仓库根目录（文件夹名字随意命名）
+
+2）将需要上传的代码文件加入到Text根目录
+
+3）在根目录下建立仓库
+使用命令行或Git Bash，输入下面命令：先进入到Text根目录下，再输入git init（初始化一个仓库）
+
+
+add和commit其实相当于本地操作了~~
+4）将所有文件添加到仓库
+使用命令行或Git Bash，输入下面命令：git add .
+
+5）提交
+使用命令行或Git Bash，输入下面命令：git commit -m “CommitInfo”
+
+6）添加源到GitHub
+git remote add origin git@github.com:YourName/YourRepositroy.git
+
+7）上传源到GitHub
+git push -u origin master
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>
+    <p>接下来在浏览器中打开<code class="language-plaintext highlighter-rouge">name.github.io</code>就能看到自己的博客内容了。</p>
+  </li>
+  <li>
+    <p>后续更新博客内容可以直接在github中修改代码，或者在本地修改后和远程仓同步</p>
+  </li>
+</ul>
+
+<h3 id="6实现keynote翻页效果">6.实现keynote翻页效果</h3>
+
+<p>1）参考Hux在其github中的描述，了解网页实现keynote布局的情况</p>
+
+<p>2）将Hux在github上的<code class="language-plaintext highlighter-rouge">js-module-7day</code>项目clone到本地</p>
+
+<p>3）在自己的gith上面建一个repo，由于这里先是自己测试，可以也叫js-module-7day</p>
+
+<p>4）将本地代码推到自己的github repo下，命令如：<code class="language-plaintext highlighter-rouge">git push origin master:gh-pages</code></p>
+
+<p>5）在博客的markdown文件中引用这个keynote repo的地址即可查看内容</p>
+
+<p>6）通过keynote repo的代码来修改keynote内容</p>
+
+<p><a href="https://huangxuan.me/js-module-7day/#/">实现效果可参考这里</a>， 还是很美观的。</p>
+
+:ET

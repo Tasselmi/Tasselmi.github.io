@@ -1,0 +1,86 @@
+I"u<blockquote>
+  <p>在dash app中添加静态元素非常简单——将静态元素放在某个目录下并引入dash app中即可。</p>
+</blockquote>
+
+<p>一般来说，需要在 <code class="language-plaintext highlighter-rouge">.py</code> 所在文件夹中新建一个文件夹命名为 <code class="language-plaintext highlighter-rouge">assets</code> ，也就是说<code class="language-plaintext highlighter-rouge">.py</code> 文件和<code class="language-plaintext highlighter-rouge">assets</code>文件夹在同一目录下（前面dash元素排版中已经提到过，<code class="language-plaintext highlighter-rouge">typography.css</code> 文件也在此文件夹下）。当然，也可以遵从自己的个人喜好建立一个文件夹，然后在dash app代码中引入文件的绝对路径即可。</p>
+
+<p>引入html文件或图片文件示例如下：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span> 
+<span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>  
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">()</span>
+<span class="n">app</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">'my-dash-app'</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+
+    <span class="n">html</span><span class="p">.</span><span class="n">Iframe</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'my-static'</span><span class="p">,</span>
+        <span class="n">src</span><span class="o">=</span><span class="s">'/assets/新增留存.html'</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">925</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="s">'100%'</span><span class="p">,</span>
+        <span class="n">draggable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'border'</span><span class="p">:</span> <span class="s">'none'</span><span class="p">,</span> <span class="s">'margin-top'</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+    <span class="p">),</span>
+
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="n">html</span><span class="p">.</span><span class="n">Img</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s">'click01_cc'</span><span class="p">,</span>
+            <span class="n">src</span><span class="o">=</span><span class="s">'/assets/creditCard01.png'</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="mi">600</span>
+        <span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'margin-left'</span><span class="p">:</span> <span class="s">'50'</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">),</span>
+
+<span class="p">])</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s">'8050'</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>引入app的icon文件
+    <ul>
+      <li>icon是指会出现在浏览器tab前面的图标</li>
+      <li>直接将icon图片文件命名为 <code class="language-plaintext highlighter-rouge">favicon.ico</code> 并放置 在<code class="language-plaintext highlighter-rouge">assets</code> 文件夹下即可，dash app会自动寻找并引用</li>
+    </ul>
+  </li>
+</ul>
+
+:ET

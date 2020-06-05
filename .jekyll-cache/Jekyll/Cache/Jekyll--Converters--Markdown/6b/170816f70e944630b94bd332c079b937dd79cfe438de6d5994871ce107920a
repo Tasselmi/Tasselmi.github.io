@@ -1,0 +1,4 @@
+I"x<blockquote>
+  <p>dash app的实时刷新功能主要依赖于 <code class="language-plaintext highlighter-rouge">dash_core_components.Interval</code>， 将<code class="language-plaintext highlighter-rouge">Interval</code>元素作为回调函数的输入，需要实时刷新的元素的相关属性值作为输出，通过监听<code class="language-plaintext highlighter-rouge">Interval</code>元素的 <code class="language-plaintext highlighter-rouge">n_intervals</code> 属性从而实现APP的动态自动更新。<code class="language-plaintext highlighter-rouge">Interval</code>元素的<code class="language-plaintext highlighter-rouge">interval</code>属性可以控制刷新频率，该属性单位为毫秒，取整数值。例如需要APP每分钟刷新一次，可以设置<code class="language-plaintext highlighter-rouge"> interval = 60*1000</code>。</p>
+</blockquote>
+:ET

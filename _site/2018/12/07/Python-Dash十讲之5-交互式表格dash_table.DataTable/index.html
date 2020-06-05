@@ -17,7 +17,6 @@
     <meta property="og:description" content="
   DataTable是dash中近来发布的独立的表格元素，功能极其强悍。上面提到的dcc.Graph中的table可以理解为是一种图形，而DataTable是纯天然的html表格，由tr、td组成，可以对表格的单元格、元素等实现高度控制，因而能够实现更为复杂的表格格式和交互式体验。
 
-
 ">
     
     <meta property="article:published_time" content="2018-12-07T20:00:00Z">
@@ -119,6 +118,8 @@
                     <li>
                         <a href="/portfolio/">Portfolio</a>
                     </li>
+                    
+                    
                     
                     
                     
@@ -253,10 +254,10 @@
                 
 
 				<blockquote>
-  <p><code class="highlighter-rouge">DataTable</code>是dash中近来发布的独立的表格元素，功能极其强悍。上面提到的<code class="highlighter-rouge">dcc.Graph</code>中的table可以理解为是一种图形，而<code class="highlighter-rouge">DataTable</code>是纯天然的html表格，由<code class="highlighter-rouge">tr</code>、<code class="highlighter-rouge">td</code>组成，可以对表格的单元格、元素等实现高度控制，因而能够实现更为复杂的表格格式和交互式体验。</p>
+  <p><code class="language-plaintext highlighter-rouge">DataTable</code>是dash中近来发布的独立的表格元素，功能极其强悍。上面提到的<code class="language-plaintext highlighter-rouge">dcc.Graph</code>中的table可以理解为是一种图形，而<code class="language-plaintext highlighter-rouge">DataTable</code>是纯天然的html表格，由<code class="language-plaintext highlighter-rouge">tr</code>、<code class="language-plaintext highlighter-rouge">td</code>组成，可以对表格的单元格、元素等实现高度控制，因而能够实现更为复杂的表格格式和交互式体验。</p>
 </blockquote>
 
-<p><code class="highlighter-rouge">DataTable</code>可以实现的功能如下：</p>
+<p><code class="language-plaintext highlighter-rouge">DataTable</code>可以实现的功能如下：</p>
 
 <ul>
   <li>表头/表标题格式控制/多行表头</li>
@@ -360,20 +361,20 @@
 <span class="kn">from</span> <span class="nn">dash.dependencies</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">State</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
 <span class="kn">import</span> <span class="nn">ssl</span>
-<span class="n">ssl</span><span class="o">.</span><span class="n">_create_default_https_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span>
+<span class="n">ssl</span><span class="p">.</span><span class="n">_create_default_https_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="p">.</span><span class="n">_create_unverified_context</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv'</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv'</span><span class="p">)</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="o">.</span><span class="n">Dash</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<span class="n">app</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">Div</span><span class="p">([</span>
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span><span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
 
-    <span class="n">dash_table</span><span class="o">.</span><span class="n">DataTable</span><span class="p">(</span>
+    <span class="n">dash_table</span><span class="p">.</span><span class="n">DataTable</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="s">'datatable-interactivity'</span><span class="p">,</span>
         <span class="c1"># table-head
-</span>        <span class="n">columns</span><span class="o">=</span><span class="p">[{</span><span class="s">'id'</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s">'name'</span><span class="p">:</span> <span class="n">c</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span>
+</span>        <span class="n">columns</span><span class="o">=</span><span class="p">[{</span><span class="s">'id'</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s">'name'</span><span class="p">:</span> <span class="n">c</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">],</span>
         <span class="c1"># table-row
-</span>        <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s">'rows'</span><span class="p">),</span>
+</span>        <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s">'rows'</span><span class="p">),</span>
         <span class="c1"># table-grid
 </span>        <span class="n">style_as_list_view</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
         <span class="c1"># common header-style
@@ -388,12 +389,12 @@
         <span class="c1"># special cell-style
 </span>        <span class="n">style_cell_conditional</span><span class="o">=</span>
         <span class="p">[</span>
-            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="n">c</span><span class="p">},</span> <span class="s">'textAlign'</span><span class="p">:</span> <span class="s">'left'</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="n">c</span><span class="p">},</span> <span class="s">'textAlign'</span><span class="p">:</span> <span class="s">'left'</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">.</span><span class="n">columns</span>
         <span class="p">]</span>
         <span class="o">+</span>
         <span class="p">[</span>
-            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="s">'State'</span><span class="p">},</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'30</span><span class="si">%</span><span class="s">'</span><span class="p">},</span>
-            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="s">'Number of Solar Plants'</span><span class="p">},</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'30</span><span class="si">%</span><span class="s">'</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="s">'State'</span><span class="p">},</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'30%'</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">'if'</span><span class="p">:</span> <span class="p">{</span><span class="s">'column_id'</span><span class="p">:</span> <span class="s">'Number of Solar Plants'</span><span class="p">},</span> <span class="s">'width'</span><span class="p">:</span> <span class="s">'30%'</span><span class="p">},</span>
         <span class="p">],</span>
         <span class="c1"># special row/column style
 </span>        <span class="n">style_data_conditional</span><span class="o">=</span><span class="p">[</span>
@@ -412,13 +413,13 @@
 
 <span class="p">])</span>
 
-<span class="o">@</span><span class="n">app</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span>
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span>
     <span class="n">Output</span><span class="p">(</span><span class="s">'datatable-interactivity'</span><span class="p">,</span> <span class="s">'data'</span><span class="p">),</span>
     <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'datatable-interactivity'</span><span class="p">,</span> <span class="s">'pagination_settings'</span><span class="p">),</span>
      <span class="n">Input</span><span class="p">(</span><span class="s">'datatable-interactivity'</span><span class="p">,</span> <span class="s">'sorting_settings'</span><span class="p">)])</span>
 <span class="k">def</span> <span class="nf">update_graph</span><span class="p">(</span><span class="n">pagination_settings</span><span class="p">,</span> <span class="n">sorting_settings</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorting_settings</span><span class="p">):</span>
-        <span class="n">dff</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+        <span class="n">dff</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">sort_values</span><span class="p">(</span>
             <span class="n">sorting_settings</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">'column_id'</span><span class="p">],</span>
             <span class="n">ascending</span><span class="o">=</span><span class="n">sorting_settings</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">'direction'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'asc'</span><span class="p">,</span>
             <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span>
@@ -427,13 +428,13 @@
         <span class="c1"># No sort is applied
 </span>        <span class="n">dff</span> <span class="o">=</span> <span class="n">df</span>
 
-    <span class="k">return</span> <span class="n">dff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span>
+    <span class="k">return</span> <span class="n">dff</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span>
         <span class="n">pagination_settings</span><span class="p">[</span><span class="s">'current_page'</span><span class="p">]</span><span class="o">*</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'page_size'</span><span class="p">]:</span>
         <span class="p">(</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'current_page'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'page_size'</span><span class="p">]</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s">'rows'</span><span class="p">)</span>
+    <span class="p">].</span><span class="n">to_dict</span><span class="p">(</span><span class="s">'rows'</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></td></tr></tbody></table></code></pre></div></div>
 
 
@@ -459,6 +460,12 @@
                 </ul>
                 <hr style="visibility: hidden;">
 
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
                 
 
                 
@@ -489,95 +496,50 @@
         </a>
         
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=Slides"
-                    title="Slides"
-                    rel="1">Slides</a>
-        
-                <a data-sort="0007" 
+                <a data-sort="0014" 
                     href="/archive/?tag=Python"
                     title="Python"
                     rel="11">Python</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
                     title="数据可视化"
                     rel="10">数据可视化</a>
         
-                <a data-sort="0008" 
+                <a data-sort="0015" 
                     href="/archive/?tag=Dash"
                     title="Dash"
                     rel="10">Dash</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
                     href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
                     title="个人网站"
-                    rel="4">个人网站</a>
+                    rel="6">个人网站</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
                     href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
                     title="阿里云服务器"
-                    rel="4">阿里云服务器</a>
+                    rel="5">阿里云服务器</a>
         
-                <a data-sort="0014" 
+                <a data-sort="0021" 
                     href="/archive/?tag=Tomcat"
                     title="Tomcat"
                     rel="4">Tomcat</a>
         
-                <a data-sort="0014" 
-                    href="/archive/?tag=jekyll"
-                    title="jekyll"
-                    rel="4">jekyll</a>
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
         
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
-                    title="学习"
-                    rel="1">学习</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C"
-                    title="工作"
-                    rel="1">工作</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%B7%A5%E4%BD%9C%E6%80%9D%E7%BB%B4"
-                    title="工作思维"
-                    rel="1">工作思维</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BC%80%E7%AF%87%E8%AF%AD"
-                    title="开篇语"
-                    rel="1">开篇语</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E5%BD%92%E7%BA%B3"
-                    title="归纳"
-                    rel="1">归纳</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6"
-                    title="数据科学"
-                    rel="1">数据科学</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E6%BC%94%E7%BB%8E"
-                    title="演绎"
-                    rel="1">演绎</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
-                    title="生活"
-                    rel="1">生活</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=JavaScript"
-                    title="JavaScript"
-                    rel="1">JavaScript</a>
-        
-                <a data-sort="0017" 
-                    href="/archive/?tag=Web"
-                    title="Web"
-                    rel="1">Web
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
     </div>
 </section>
 
@@ -590,8 +552,6 @@
   
   <li><a href="http://mida.re/">乱序</a></li>
   
-  <li><a href="http://qianduan.guru/">前端外刊评论</a></li>
-  
   <li><a href="http://lingyu.wang/">天镶的博客</a></li>
   
   <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
@@ -599,14 +559,6 @@
   <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
   
   <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
-  
-  <li><a href="https://www.ruoyaowu.com/">David's Game</a></li>
-  
-  <li><a href="http://dhong.co">DHong Say</a></li>
-  
-  <li><a href="http://ingf.github.io/">尹峰以为</a></li>
-  
-  <li><a href="http://xieminis.me/">解旻的博客</a></li>
   
 </ul>
 
@@ -621,6 +573,21 @@
 
 
 
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/07/Python Dash十讲之5-交互式表格dash_table.DataTable";
+    var disqus_url = "http://localhost:4000/2018/12/07/Python-Dash%E5%8D%81%E8%AE%B2%E4%B9%8B5-%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%A1%A8%E6%A0%BCdash_table.DataTable/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
 
 
 
@@ -667,7 +634,7 @@
 </ul>
 
                 <p class="copyright text-muted">
-                    Copyright &copy; LiangFan's Blog 2018
+                    Copyright &copy; LiangFan's Blog 2020
                     <br>
                     Powered by <a href="http://huangxuan.me">Hux Blog</a> |
                     <iframe

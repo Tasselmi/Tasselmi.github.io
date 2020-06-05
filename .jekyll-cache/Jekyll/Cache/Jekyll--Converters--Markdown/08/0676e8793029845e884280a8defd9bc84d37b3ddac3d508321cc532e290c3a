@@ -1,0 +1,4 @@
+I"<blockquote>
+  <p>本文旨在从零开始手把手教你部署个人博客网站，即使你没有任何技术背景。因为是部署博客网站，那么目的是方便自己写博文，技术实现手段上越简单越好，尽可能的使用现成的技术框架。这里使用的是<code class="language-plaintext highlighter-rouge">jekyll + Hux Blog Theme + Tomcat + 阿里云ESC服务器</code>来部署，接下来会引导你一步一步从零开始，直到能打开自己的网站为止。</p>
+</blockquote>
+:ET

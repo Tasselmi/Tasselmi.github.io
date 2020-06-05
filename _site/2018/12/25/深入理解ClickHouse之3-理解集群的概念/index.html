@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="关于大数据、数据挖掘、数据可视化、机器学习、算法、集群、分布式计算 | LiangFan，Data Analyst & Big Data Lover | 这里是 @LiangFan梁凡 的个人博客，想和你们分享一切。">
+    <meta name="keywords"  content="梁凡, LiangFan梁凡, LiangFan, 大数据, 数据挖掘, 数据分析, 数据可视化, 机器学习, 算法, 集群, 分布式计算, 函数式编程, python, dash, scala, numpy, pandas, plotly, clickhouse, @LiangFan, 梁凡的博客, LiangFan Blog, 博客, 个人网站, 互联网, Web">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="深入理解ClickHouse之3-理解集群的概念 - 梁凡的博客 | LiangFan Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="
+  从本章开始，我的黑手就慢慢的伸向了大数据所涉及的两个最核心的问题——分布式和并行计算了。
+
+">
+    
+    <meta property="article:published_time" content="2018-12-25T20:00:00Z">
+    
+    
+    <meta property="article:author" content="LiangFan">
+    
+    
+    <meta property="article:tag" content="ClickHouse">
+    
+    <meta property="article:tag" content="OLAP">
+    
+    <meta property="article:tag" content="分布式">
+    
+    <meta property="article:tag" content="集群">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/me.JPG">
+    <meta property="og:url" content="http://localhost:4000/2018/12/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B3-%E7%90%86%E8%A7%A3%E9%9B%86%E7%BE%A4%E7%9A%84%E6%A6%82%E5%BF%B5/">
+    <meta property="og:site_name" content="梁凡的博客 | LiangFan Blog">
+    
+    <title>深入理解ClickHouse之3-理解集群的概念 - 梁凡的博客 | LiangFan Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2018/12/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B3-%E7%90%86%E8%A7%A3%E9%9B%86%E7%BE%A4%E7%9A%84%E6%A6%82%E5%BF%B5/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LiangFan's Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About Me</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/portfolio/">Portfolio</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/my-post/2018-clickhouse.jpeg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/my-post/2018-clickhouse.jpeg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=ClickHouse" title="ClickHouse">ClickHouse</a>
+                        
+                        <a class="tag" href="/archive/?tag=OLAP" title="OLAP">OLAP</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E5%88%86%E5%B8%83%E5%BC%8F" title="分布式">分布式</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E9%9B%86%E7%BE%A4" title="集群">集群</a>
+                        
+                    </div>
+                    <h1>深入理解ClickHouse之3-理解集群的概念</h1>
+                    
+                    <h2 class="subheading">————集群、分布式、并行计算</h2>
+                    <span class="meta">Posted by LiangFan on December 25, 2018</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<blockquote>
+  <p>从本章开始，我的黑手就慢慢的伸向了大数据所涉及的两个最核心的问题——分布式和并行计算了。</p>
+</blockquote>
+
+<p>大数据计算涉及两个最核心的命题——分布式和并行计算。分布式是为了解决要计算的数据过大算不了的问题，并行计算是要解决计算太慢突破单机性能的问题（当然了这里面也涉及算法问题，后面再表）。当然，即便你再怎么突破，也是无法突破硬件的瓶颈的，所以归根揭底，大数据的核心命题应该是CPU和内存等硬件？</p>
+
+<h4 id="1-理解几个核心概念">1. 理解几个核心概念</h4>
+<p>1）集群</p>
+
+<p>简单的理解，集群就是把多台计算机（服务器）拼凑在一起，它们相互合作和组合，在物理上构成了一个整体。下面是一个简单的集群示例：</p>
+
+<p><img src="/img/my-post/20181225a.png" alt="Alt text" /></p>
+
+<p>一个集群中的单个服务器，一般称为节点（node）。一个节点需与其它所有节点之间保持可连接性，因为任何两个节点之间都会存在通信的可能性（后面会讲原因）。</p>
+
+<p>这里简要的谈下个人计算机和服务器。如果不详加区分，服务器跟个人计算机没什么两样，都是硬件上面装上软件。但是二者是为不同目的来设计的，个人计算机主要设计方向是长时间处理同一任务，同时界面友好。服务器的主要设计目的是同时间处理多个任务（低频率多线程），比如海量请求，另外对于稳定性和持续性也会要求较高。当然，不同的服务器也有不同的特征，比如说做计算的，那肯定是各方面都必须比较强的。这里不再展开，了解即可。</p>
+
+<p>2）分布式</p>
+
+<p>分布式的概念是相对于单个任务而言的，一个大任务或者复杂任务，将其按照一定的逻辑拆分成多个小任务，每个小任务单独处理，然后合并每个小结果成一个大结果。下面是一个简单的分布式架构示例：</p>
+
+<p><img src="/img/my-post/20181225b.png" alt="Alt text" /></p>
+
+<p>如上图，大任务被拆分后，每个小任务单独运行。每个小任务可以执行相同的操作，也可以执行不同的操作。</p>
+
+<p>如果是每个小任务执行相同的运算操作，并且按照相同的运算合并，那么该系统便成了MapReduce结构，说到这里可能有的小伙伴就比较熟悉了，平时大家用的Apache Hadoop就是这个操作了。MapReduce在后面谈到函数式编程的时候会再讲，因为是一个可以谈很多的、很有意思的话题。</p>
+
+<p>如果将这里的大任务替换成N多个任务，分配后执行相同的操作，直接得到结果，没有结果合并的过程，那么就成了一个负载均衡的模型。比如海量请求，通过一个中间代理将不同的请求分配到不同的机器上。实现负载均衡，要么在分发的时候确定权重，要么监测每个机器的使用状态并反馈给分发器来进行均衡（这个显然比纯粹依靠分发更科学，但是也更复杂）。负载均衡与分布式的几个显著不同是：</p>
+
+<p>负载均衡是将多个任务进行平衡分配的机制，分布式是对于单个任务而言的
+分布式有结果合并的过程（因为是处理一个任务），负载均衡直接每个结果就是独立可用的（任务各自独立）
+另外，分布式一般也是和多服务器系统（可以是集群也可以不是）联系在一起的，因为子任务一般是放在不同的机器上独立运行。分布式是一种系统或者说软件层面的解构过程，而集群是一个物理概念。</p>
+
+<p>3）并行计算</p>
+
+<p>并行计算是在单个机器的范畴内针对单个任务而言的。比如对一个List求和，可以将这个List先分成两份，两份中各自再又分成两份，一直到无法继续分下去为止，然后每个部分同时运行。在计算大任务时，并行会比单行快。</p>
+
+<p>4）分布式集群</p>
+
+<p>分布式集群兼以上三个特点而有之，能够处理大型任务，而且压榨计算性能。我划重点如下：</p>
+
+<ul>
+  <li>多机器多任务处理</li>
+  <li>每个单任务用分布式处理</li>
+  <li>每个单机器内部实现并行计算</li>
+  <li>分布式的文件系统</li>
+</ul>
+
+<h4 id="2-分布式集群模型">2. 分布式集群模型</h4>
+<p>下面借助一个<code class="language-plaintext highlighter-rouge">3*3分布式集群模型</code>来厘清一些基本概念和定义：</p>
+
+<p><img src="/img/my-post/20181225c.png" alt="Alt text" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">分片（shard）</code>：一个分片代表一组机器，分片内部各机器存储相同的数据（分布式文件系统），所有分片中的任一个想加起来等于完整的数据。集群的性能取决于分片的数量。各个分片可以具有不同的权重（比如说有的机器性能好存储空间大，那么可以权重设置高一点）。如上图，共3个分片，其中147属于一个分片，258属于一个分片，369属于一个分片。实际运行中，各分片各取一台机器共3台机器来计算，其它的机器只作为备份之用，并不参与实际计算。</p>
+
+<p><code class="language-plaintext highlighter-rouge">节点（node）</code>：一个节点就是一台机器，上图就是一个3x3的有9个节点的分布式集群。</p>
+
+<p><code class="language-plaintext highlighter-rouge">备份（replica）</code>：同一个分片内，各个节点互为备份，记住是互为备份，没有主次之分，因为他们是完全一模一样的，相互补位。任何时候，只要不发生故障，他们都是一模一样的，这叫同一性。上图中147互为备份。</p>
+
+<p>一个大集群中可以有独立的子集群，运行着不同的分布式系统。比如说，可以把hadoop、ClickHouse、Kafka都部署在同一个集群上，实际情况则取决于各自安排和考虑。</p>
+
+<h4 id="3-集群的优点及缺陷">3. 集群的优点及缺陷</h4>
+<p>通过上面的这一番分析，相信对于集群的概念有了较为完整的印象了。分布式集群是为了处理大任务/复杂计算，提高计算性能和稳定性而产生的。</p>
+
+<p>相对于分布式这个概念，分布式集群提供了分布式的文件/资源系统（将需要访问的资源分布在不同的机器上面）和备份，这样使得兼顾高性能和高可用成为了可能。试想下，如果没有分片之间的通信和分布式文件系统，那么每次都需要在每个机器的全量数据中去寻找和子任务计算相关的资源，效率低下；如果没有分片内部的备份和通信，那么一旦某个机器出现问题，其中一个子任务就直接挂了，这部分数据缺失后后面的合并结果也就失去了准确性。</p>
+
+<p>综上，分布式集群有以下优点：</p>
+<ul>
+  <li>高性能（通过组装，扩大了可使用的内存和处理器数量）</li>
+  <li>高可用（备份保障）</li>
+  <li>高可扩展性（机器数量） 另外，一般而言集群还都拥有负载均衡和自动错误恢复个功能。</li>
+</ul>
+
+<p>但是，集群也有自己的弱点：</p>
+<ul>
+  <li>费钱
+    <ul>
+      <li>计算属性的服务器本身就比较贵，搭建一个集群那就是贵上加贵</li>
+      <li>效率和可用性之间需要兼顾，对于中小公司而言，又想高性能，又想兼顾可用性，但是扩展任何一方面，那都是白花花的银子；像我们公司3台机器部署的集群（3个分片3个备份），可以说是穷人家的集群了，虽然极致压榨了性能和可用性，但是致命的是，可扩展性太差，如果后面添加机器直接能搞的人精神分裂</li>
+      <li>为了提高可用性，有时候甚至需要将不同的备份部署在不同的数据中心，这对集群间的通信和数据传输也是挑战，如果配置专属网络，这又是钱</li>
+    </ul>
+  </li>
+  <li>费人
+    <ul>
+      <li>虽说集群优点多，但是门槛也是有的，需要有专门的人才来维护和保障</li>
+    </ul>
+  </li>
+</ul>
+
+<p> </p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B2-%E9%83%A8%E7%BD%B2%E5%8D%95%E6%9C%BA%E7%89%88ClickHouse/" data-toggle="tooltip" data-placement="top" title="深入理解ClickHouse之2-部署单机版ClickHouse">
+                        Previous<br>
+                        <span>深入理解ClickHouse之2-部署单机版ClickHouse</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/12/26/%E5%88%A9%E7%94%A8Nginx%E9%83%A8%E7%BD%B2%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/" data-toggle="tooltip" data-placement="top" title="利用Nginx部署个人网站">
+                        Next<br>
+                        <span>利用Nginx部署个人网站</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0014" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="11">Python</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96"
+                    title="数据可视化"
+                    rel="10">数据可视化</a>
+        
+                <a data-sort="0015" 
+                    href="/archive/?tag=Dash"
+                    title="Dash"
+                    rel="10">Dash</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99"
+                    title="个人网站"
+                    rel="6">个人网站</a>
+        
+                <a data-sort="0019" 
+                    href="/archive/?tag=jekyll"
+                    title="jekyll"
+                    rel="6">jekyll</a>
+        
+                <a data-sort="0020" 
+                    href="/archive/?tag=%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"
+                    title="阿里云服务器"
+                    rel="5">阿里云服务器</a>
+        
+                <a data-sort="0021" 
+                    href="/archive/?tag=Tomcat"
+                    title="Tomcat"
+                    rel="4">Tomcat</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=ClickHouse"
+                    title="ClickHouse"
+                    rel="3">ClickHouse</a>
+        
+                <a data-sort="0022" 
+                    href="/archive/?tag=OLAP"
+                    title="OLAP"
+                    rel="3">OLAP
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="http://mida.re/">乱序</a></li>
+  
+  <li><a href="http://lingyu.wang/">天镶的博客</a></li>
+  
+  <li><a href="http://hmqk1995.github.io">Luke 的自留地</a></li>
+  
+  <li><a href="http://ebnbin.com/">Ebn's Blog</a></li>
+  
+  <li><a href="http://blog.smdcn.net">SmdCn's Blog</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "liangfan";
+    var disqus_identifier = "/2018/12/25/深入理解ClickHouse之3-理解集群的概念";
+    var disqus_url = "http://localhost:4000/2018/12/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3ClickHouse%E4%B9%8B3-%E7%90%86%E8%A7%A3%E9%9B%86%E7%BE%A4%E7%9A%84%E6%A6%82%E5%BF%B5/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <li>
+    <a href="https://twitter.com/DreamAsHorse">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/tasselmi">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; LiangFan's Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-130482639-1';
+    var _gaDomain = 'liangfan.tech';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'd93bdd58f8335d1b868c1536fbaba623';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

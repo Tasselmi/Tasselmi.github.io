@@ -1,0 +1,332 @@
+I"|c<p>设想如下1个需求：</p>
+<ul>
+  <li>从数据库读取数据，数据量较大；然后将数据以Excel表格形式呈现在网页上</li>
+  <li>数据表格可下载原始数据</li>
+  <li>将其中部分数据或者全部数据以可视化图形方式呈现在网页上，需要呈现多个图形</li>
+  <li>要求所有图形和表格按照一定频率定时自动刷新，下载的原始数据也必须是最新的数据</li>
+</ul>
+
+<blockquote>
+  <p>需求分析：因为需要定时刷新，所以需要用到上面讲的监听 <code class="language-plaintext highlighter-rouge">n_intervals</code> 来实现（如果不监听<code class="language-plaintext highlighter-rouge">Interval</code>元素的 <code class="language-plaintext highlighter-rouge">n_intervals</code> 属性的话，那么读取数据并存为变量，只会在app启动的时候io一次，后面这个变量一直存储在内存中不会改变），每一个需要自动刷新的图形都要监听 <code class="language-plaintext highlighter-rouge">n_intervals</code> ；但是如果每个回调函数的input都是n_intervals的话，那么每个函数中都需要从数据库中读取数据，而这个数据量又非常大，如果每个函数都重复IO就非常耗时。因此需要转变解决问题的思路。</p>
+</blockquote>
+
+<p>1个可能的解决方案如下：</p>
+<ul>
+  <li>用一个div元素来存储中间数据，这个div的数据实现实时刷新，通过监听n_intervals来实现</li>
+  <li>这个div元素设置为在前端不显示，只作为存储中间数据用</li>
+  <li>这个div元素中的数据以json形式存储</li>
+  <li>其它需要用到数据的元素从div元素中读取json，可以读取一部分或者全部读取，看使用需求情况</li>
+  <li>div中的中间数据是基于用户当前浏览器会话的，不同用户间不共享，也就说每个用户打开页面都要IO一次数据，打开新的浏览器窗口也会重新IO一次数据</li>
+  <li>该方案减少的是同一次会话中的重复IO时间，但是会增加不同回调函数间数据交换的时间，回调函数间的数据交换是通过网络传输实现的，因此会增加网络消耗</li>
+</ul>
+
+<p>代码示例如下：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+</pre></td><td class="rouge-code"><pre><span class="c1"># -*- coding: utf-8 -*-
+</span><span class="kn">import</span> <span class="nn">dash</span>
+<span class="kn">import</span> <span class="nn">dash_core_components</span> <span class="k">as</span> <span class="n">dcc</span>
+<span class="kn">import</span> <span class="nn">dash_html_components</span> <span class="k">as</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">from</span> <span class="nn">dash.dependencies</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">Event</span>
+<span class="kn">import</span> <span class="nn">dash_table</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="n">ssl</span><span class="p">.</span><span class="n">_create_default_https_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="p">.</span><span class="n">_create_unverified_context</span>
+
+<span class="k">def</span> <span class="nf">select_mysql_data</span><span class="p">(</span><span class="n">db_config</span><span class="p">,</span> <span class="n">sql_sentence</span><span class="p">):</span>
+    <span class="s">'''
+    # 连接mysql数据库查询信息
+    :param db_config:
+    :param sql_sentence:
+    :return:
+    '''</span>
+    <span class="c1"># 连接数据库
+</span>    <span class="n">connection</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">db_config</span><span class="p">[</span><span class="s">'host'</span><span class="p">],</span>
+        <span class="n">user</span><span class="o">=</span><span class="n">db_config</span><span class="p">[</span><span class="s">'user'</span><span class="p">],</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">db_config</span><span class="p">[</span><span class="s">'password'</span><span class="p">],</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">3306</span><span class="p">,</span>
+        <span class="n">charset</span><span class="o">=</span><span class="s">'utf8'</span>
+    <span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_sentence</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">()</span>
+    <span class="n">col_name</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">description</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">connection</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">col_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'sql sentence matches no values.'</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="n">reports_mysql_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'host'</span><span class="p">:</span> <span class="s">'127.0.0.1'</span><span class="p">,</span>
+    <span class="s">'user'</span><span class="p">:</span> <span class="s">'your-user'</span><span class="p">,</span>
+    <span class="s">'password'</span><span class="p">:</span> <span class="s">'your-pwd'</span><span class="p">,</span>
+    <span class="s">'port'</span><span class="p">:</span> <span class="s">'3306'</span><span class="p">,</span>
+    <span class="s">'database'</span><span class="p">:</span> <span class="s">'db-name'</span><span class="p">,</span>
+    <span class="s">'table'</span><span class="p">:</span> <span class="s">'tb-name'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">sent</span> <span class="o">=</span> <span class="s">"SELECT * FROM {}.{}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">reports_mysql_config</span><span class="p">[</span><span class="s">'database'</span><span class="p">]</span> <span class="p">,</span><span class="n">reports_mysql_config</span><span class="p">[</span><span class="s">'table'</span><span class="p">])</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">dash</span><span class="p">.</span><span class="n">Dash</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">([</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'div-store-data'</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'display'</span><span class="p">:</span> <span class="s">'none'</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="n">dash_table</span><span class="p">.</span><span class="n">DataTable</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'data-table'</span><span class="p">,</span>
+        <span class="n">style_as_list_view</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">style_header</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'backgroundColor'</span><span class="p">:</span> <span class="s">'#3D9970'</span><span class="p">,</span>
+            <span class="s">'fontWeight'</span><span class="p">:</span> <span class="s">'bold'</span><span class="p">,</span>
+            <span class="s">'textAlign'</span><span class="p">:</span> <span class="s">'center'</span><span class="p">,</span>
+            <span class="s">'color'</span><span class="p">:</span> <span class="s">'white'</span><span class="p">,</span>
+            <span class="s">'padding'</span><span class="p">:</span> <span class="mi">10</span>
+        <span class="p">},</span>
+        <span class="n">style_cell</span><span class="o">=</span><span class="p">{</span><span class="s">'textAlign'</span><span class="p">:</span> <span class="s">'center'</span><span class="p">},</span>
+        <span class="n">pagination_settings</span><span class="o">=</span><span class="p">{</span>
+            <span class="s">'current_page'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s">'page_size'</span><span class="p">:</span> <span class="mi">15</span>  <span class="c1"># 每页行数
+</span>        <span class="p">},</span>
+        <span class="n">pagination_mode</span><span class="o">=</span><span class="s">'be'</span><span class="p">,</span>
+        <span class="n">sorting</span><span class="o">=</span><span class="s">'be'</span><span class="p">,</span>
+        <span class="n">sorting_type</span><span class="o">=</span><span class="s">'single'</span><span class="p">,</span>
+        <span class="n">sorting_settings</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">),</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+       <span class="n">html</span><span class="p">.</span><span class="n">A</span><span class="p">(</span>
+           <span class="s">'下载原始数据'</span><span class="p">,</span>
+           <span class="nb">id</span><span class="o">=</span><span class="s">'download-link'</span><span class="p">,</span>
+           <span class="n">download</span><span class="o">=</span><span class="s">"raw-data.csv"</span><span class="p">,</span>
+           <span class="n">href</span><span class="o">=</span><span class="s">""</span><span class="p">,</span>
+           <span class="n">target</span><span class="o">=</span><span class="s">"_blank"</span><span class="p">,</span>
+           <span class="n">n_clicks</span><span class="o">=</span><span class="mi">0</span>
+       <span class="p">),</span>
+       <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'margin-top'</span><span class="p">:</span> <span class="mi">30</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="n">dcc</span><span class="p">.</span><span class="n">Interval</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'interval-component'</span><span class="p">,</span>
+        <span class="n">interval</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span>   <span class="c1"># in milliseconds / refresh the web-page in every 60 minutes
+</span>        <span class="n">n_intervals</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">),</span>
+    <span class="n">html</span><span class="p">.</span><span class="n">Div</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'listen-download-link'</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'display'</span><span class="p">:</span> <span class="s">'none'</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s">'margin-left'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'margin-right'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">'margin-top'</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
+
+<span class="c1"># 监听n_intervals，实现数据自动刷新，并将新数据存入一个hidden的div中
+</span><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'div-store-data'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'interval-component'</span><span class="p">,</span> <span class="s">'n_intervals'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_and_store_data</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">channelDailyData</span> <span class="o">=</span> <span class="n">select_mysql_data</span><span class="p">(</span><span class="n">reports_mysql_config</span><span class="p">,</span> <span class="n">sent</span><span class="p">).</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s">'日期'</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">channelDailyData</span><span class="p">[</span><span class="s">'日期'</span><span class="p">]</span> <span class="o">=</span> <span class="n">channelDailyData</span><span class="p">[</span><span class="s">'日期'</span><span class="p">].</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">channelDailyData</span><span class="p">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s">'split'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'download-link'</span><span class="p">,</span> <span class="s">'href'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'div-store-data'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_download_link</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s">'split'</span><span class="p">)</span>
+    <span class="n">csv_string</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">)</span>
+    <span class="n">csv_string</span> <span class="o">=</span> <span class="s">"data:text/csv;charset=utf-8,"</span> <span class="o">+</span> <span class="n">urllib</span><span class="p">.</span><span class="n">parse</span><span class="p">.</span><span class="n">quote</span><span class="p">(</span><span class="n">csv_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">csv_string</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'data-table'</span><span class="p">,</span> <span class="s">'columns'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'div-store-data'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s">'split'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="s">'id'</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s">'name'</span><span class="p">:</span> <span class="n">c</span><span class="p">}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">.</span><span class="n">columns</span><span class="p">]</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span>
+    <span class="n">Output</span><span class="p">(</span><span class="s">'data-table'</span><span class="p">,</span> <span class="s">'data'</span><span class="p">),</span>
+    <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'data-table'</span><span class="p">,</span> <span class="s">'pagination_settings'</span><span class="p">),</span> <span class="n">Input</span><span class="p">(</span><span class="s">'data-table'</span><span class="p">,</span> <span class="s">'sorting_settings'</span><span class="p">),</span>
+     <span class="n">Input</span><span class="p">(</span><span class="s">'div-store-data'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">update_graph</span><span class="p">(</span><span class="n">pagination_settings</span><span class="p">,</span> <span class="n">sorting_settings</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s">'split'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorting_settings</span><span class="p">):</span>
+        <span class="n">dff</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">sort_values</span><span class="p">(</span>
+            <span class="n">sorting_settings</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">'column_id'</span><span class="p">],</span>
+            <span class="n">ascending</span><span class="o">=</span><span class="n">sorting_settings</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">'direction'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'asc'</span><span class="p">,</span>
+            <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># No sort is applied
+</span>        <span class="n">dff</span> <span class="o">=</span> <span class="n">df</span>
+
+    <span class="k">return</span> <span class="n">dff</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span>
+        <span class="n">pagination_settings</span><span class="p">[</span><span class="s">'current_page'</span><span class="p">]</span><span class="o">*</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'page_size'</span><span class="p">]:</span>
+        <span class="p">(</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'current_page'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">pagination_settings</span><span class="p">[</span><span class="s">'page_size'</span><span class="p">]</span>
+    <span class="p">].</span><span class="n">to_dict</span><span class="p">(</span><span class="s">'rows'</span><span class="p">)</span>
+
+<span class="c1"># 监听是否有人下载了数据
+</span><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">callback</span><span class="p">(</span><span class="n">Output</span><span class="p">(</span><span class="s">'listen-download-link'</span><span class="p">,</span> <span class="s">'children'</span><span class="p">),</span> <span class="p">[</span><span class="n">Input</span><span class="p">(</span><span class="s">'download-link'</span><span class="p">,</span> <span class="s">'n_clicks'</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">listen_download_link</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">{}  someone download data in {} times.'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">n</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">run_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8050</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p> 
+ </p>
+
+:ET

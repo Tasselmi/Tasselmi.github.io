@@ -1,0 +1,4 @@
+I"�<blockquote>
+  <p>dash中的dcc.Graph 也就是图形元素只能通过图形自带的参数来调整形状、颜色、位置等。其它元素既可以通过dash内置参数来调整，也可以通过外置的CSS文件来控制。</p>
+</blockquote>
+:ET

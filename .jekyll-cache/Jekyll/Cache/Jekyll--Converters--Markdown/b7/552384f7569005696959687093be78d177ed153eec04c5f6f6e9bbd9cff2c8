@@ -1,0 +1,4 @@
+I"�<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">DataTable</code>是dash中近来发布的独立的表格元素，功能极其强悍。上面提到的<code class="language-plaintext highlighter-rouge">dcc.Graph</code>中的table可以理解为是一种图形，而<code class="language-plaintext highlighter-rouge">DataTable</code>是纯天然的html表格，由<code class="language-plaintext highlighter-rouge">tr</code>、<code class="language-plaintext highlighter-rouge">td</code>组成，可以对表格的单元格、元素等实现高度控制，因而能够实现更为复杂的表格格式和交互式体验。</p>
+</blockquote>
+:ET

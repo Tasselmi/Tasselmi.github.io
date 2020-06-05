@@ -1,0 +1,2 @@
+I"#<p>由于ClickHouse是不支持Windows系统的，所以只能安装在Linux或者Mac OSX系统上。如果Windows用户需要尝试的话，需要通过虚拟机或者其它方式安装。本文将一步步带领Linux用户和Mac OSX用户从零开始安装部署单机版ClickHouse。</p>
+:ET
